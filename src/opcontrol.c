@@ -117,27 +117,34 @@ void operatorControl() {
         setMogoAngle(MOGO_HALF);
       }
 
-      if (joystickGetDigital(1, 8, JOY_LEFT) == 1) {
+      if (joystickGetDigital(1, 8, JOY_UP) == 1) {
         setConeAngle(CONE_UP);
       } else if (joystickGetDigital(1, 8, JOY_RIGHT) == 1) {
         setConeAngle(CONE_DOWN);
       }
 
-      if (joystickGetDigital(1, 8, JOY_UP) == 1) {
+      if (joystickGetDigital(1, 8, JOY_LEFT) == 1) {
         motorSet(liftMotor,-127);
-        setLiftState(0);
+        setLiftState(2);
       } else if (joystickGetDigital(1, 8, JOY_DOWN) == 1) {
         motorSet(liftMotor,127);
-        setLiftState(0);
+        setLiftState(2);
       }
-
-      if((getLiftState()==0)&&((joystickGetDigital(1, 8, JOY_DOWN) == 0)&&(joystickGetDigital(1, 8, JOY_UP) == 0))){
+      if((getLiftState()!=1)&&((joystickGetDigital(1, 8, JOY_DOWN) == 0)&&(joystickGetDigital(1, 8, JOY_LEFT) == 0))){
         setLiftHeight(analogRead(LIFT_POT_PORT));
         setLiftState(1);
       }
 
+      if (joystickGetDigital(1, 7, JOY_UP) == 1) {
+        motorSet(goliathMotor,-127);
+      } else if (joystickGetDigital(1, 7, JOY_RIGHT) == 1) {
+        motorSet(goliathMotor,127);
+      }
+      else{
+        motorSet(goliathMotor,0);
+      }
+
     }
-    printf("Postition: %d\n",analogRead(CONE_POT_PORT));
     delay(50);
   }
   //taskDelete(autoPilotHandle);

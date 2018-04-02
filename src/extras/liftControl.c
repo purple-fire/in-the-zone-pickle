@@ -24,18 +24,14 @@ void liftControl(void *parameter)
 {
 
     // Separate variables to simplify tuning
-    const float kp = 0.18;
-    const float ki = 0.00; //0.7;
-    const float kd = 0.0;
-
     PIDData mogoLift;
-    pidDataInit(&mogoLift, kp, ki, kd, 125, 4095, 150);
+    pidDataInit(&mogoLift, 0.18, 0, 0, 125, 4095, 150);
 
     PIDData coneLift;
-    pidDataInit(&coneLift, kp, ki, kd, 125, 4095, 150);
+    pidDataInit(&coneLift, .18, 0, 0, 125, 4095, 150);
 
     PIDData lift;
-    pidDataInit(&lift, kp, ki, kd, 125, 4095, 150);
+    pidDataInit(&lift, .25, 0, 0, 125, 4095, 150);
 
     while (true)
     {
@@ -75,9 +71,9 @@ void liftControl(void *parameter)
             int liftPowerOut = pidNextIteration(&lift, errorLiftAngle);
             printf("liftPosition: %d\n", liftPosition);
             printf("liftPower: %d\n", liftPowerOut);
-            //motorSet(liftMotor,liftPowerOut);
+            motorSet(liftMotor,-liftPowerOut);
         }
-        else
+        else if (liftToggle!=2)
         {
             motorStop(liftMotor);
         }
