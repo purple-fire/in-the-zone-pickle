@@ -18,7 +18,7 @@ int coneToggle =1;
 
 int liftTarget = LIFT_DOWN;
 int liftPosition;
-int liftToggle =1;
+int liftToggle =2;
 
 void liftControl(void *parameter)
 {
@@ -64,6 +64,7 @@ void liftControl(void *parameter)
             motorStop(coneLiftMotor);
         }
 
+        /*
         if (liftToggle==1)
         {
             liftPosition = analogRead(LIFT_POT_PORT);
@@ -77,7 +78,8 @@ void liftControl(void *parameter)
         {
             motorStop(liftMotor);
         }
-
+        */
+        
         delay(20);
     }
 }

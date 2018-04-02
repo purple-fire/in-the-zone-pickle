@@ -89,6 +89,8 @@ void operatorControl() {
 
   setMogoAngle(MOGO_UP);
   mogoToggle = 1;
+  setConeAngle(CONE_UP);
+  setLiftState(2);
 
   while (true) {
     motorSet(5,-127); //ALWAYS SET PIN 5 HIGH
@@ -125,14 +127,11 @@ void operatorControl() {
 
       if (joystickGetDigital(1, 8, JOY_LEFT) == 1) {
         motorSet(liftMotor,-127);
-        setLiftState(2);
       } else if (joystickGetDigital(1, 8, JOY_DOWN) == 1) {
         motorSet(liftMotor,127);
-        setLiftState(2);
       }
-      if((getLiftState()!=1)&&((joystickGetDigital(1, 8, JOY_DOWN) == 0)&&(joystickGetDigital(1, 8, JOY_LEFT) == 0))){
-        setLiftHeight(analogRead(LIFT_POT_PORT));
-        setLiftState(1);
+      else{
+        motorSet(liftMotor,0);        
       }
 
       if (joystickGetDigital(1, 7, JOY_UP) == 1) {
