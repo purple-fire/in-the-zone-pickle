@@ -68,24 +68,15 @@ void initialize() {
     BLEncoder = encoderInit(QUAD_TOP_PORT_LEFT, QUAD_BOTTOM_PORT_LEFT, false);
     BREncoder = encoderInit(QUAD_TOP_PORT_RIGHT, QUAD_BOTTOM_PORT_RIGHT, false);
 
-    /* Calibrate line sensor.
-     * All sensors should be positions on dark squares.
-     * The average threshold between all of them is calculated.
-     */
-    lineThreshold = 0;
-    lineThreshold += analogCalibrate(LINE_RIGHT_PORT);
-    lineThreshold += analogCalibrate(LINE_CENTER_PORT);
-    lineThreshold += analogCalibrate(LINE_LEFT_PORT);
-    lineThreshold /= 3;
     /* Go a little below the dark value
      * TODO Have a separate callibration portion to get the value for lines.
      */
-    lineThreshold -= 500;
 
     /* Calibrate the potentiometer */
     /* analogCalibrate(POTENTIOMETER_PORT); */
     analogCalibrate(MOGO_POT_PORT);
-
+    analogCalibrate(LIFT_POT_PORT);
+    analogCalibrate(CONE_POT_PORT);
     /* Start the lift task here since it is needed in both autonomous and driver
      * control.
      */

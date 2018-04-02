@@ -24,9 +24,9 @@
 
 static const char *debugTable[DB_TABLE_ROWS][DB_TABLE_COLS] = {
     { "AUTONOMUS",      "MISC",         "SENSORS" },
-    { "rightError",     "liftToggle",   "gyro" },
+    { "rightError",     "mogoToggle",   "gyro" },
     { "rightPower",     "liftTarget",   "rightEncoder" },
-    { "leftError",      "liftPosition", "leftEncoder" },
+    { "leftError",      "mogoPosition", "leftEncoder" },
     { "leftPower",      NULL,           "potentiometer" },
     { "turnError",      NULL,           "Ultrasonic" },
     { "turnPower",      "lineThresh",   "Center line" },
@@ -76,17 +76,17 @@ void debugMonitor(void *parameter) {
         dbTableValuePrintf(5, 0, "%8d", turnError);
         dbTableValuePrintf(6, 0, "%8d", turnPower);
 
-        dbTableValuePrintf(1, 1, "%8s", liftToggle ? "on" : "off");
-        dbTableValuePrintf(2, 1, "%8d", desiredLiftAngle);
-        dbTableValuePrintf(3, 1, "%8d", liftPosition);
+        dbTableValuePrintf(1, 1, "%8s", mogoToggle ? "on" : "off");
+        dbTableValuePrintf(2, 1, "%8d", mogoTarget);
+        dbTableValuePrintf(3, 1, "%8d", mogoPosition);
         dbTableValuePrintf(6, 1, "%8d", lineThreshold);
 
         dbTableValuePrintf(1, 2, "%8d", devgyroGet(&gyroDev));
         dbTableValuePrintf(2, 2, "%8d", encoderGet(BREncoder));
         dbTableValuePrintf(3, 2, "%8d", encoderGet(BLEncoder));
-        dbTableValuePrintf(4, 2, "%8d", liftPosition);
+        dbTableValuePrintf(4, 2, "%8d", mogoPosition);
         dbTableValuePrintf(5, 2, "%8d", ultrasonicGet(sonar));
-        dbTableValuePrintf(6, 2, "%8d", analogReadCalibrated(LINE_CENTER_PORT));
+        dbTableValuePrintf(6, 2, "%8d", 0);
         dbTableValuePrintf(7, 2, "%+4d:%+4d", joystickGetAnalog(1, CLY), joystickGetAnalog(1, CLX));
         dbTableValuePrintf(8, 2, "%+4d:%+4d", joystickGetAnalog(1, CRY), joystickGetAnalog(1, CRX));
 

@@ -4,9 +4,22 @@
 
 #include "main.h"
 
-#define LIFT_DOWN 1030
-#define LIFT_HALF 1530
-#define LIFT_UP 2612
+#define MOGO_DOWN 1290
+#define MOGO_HALF 1860
+#define MOGO_UP 2930
+
+#define CONE_DOWN 3920
+#define CONE_HALF 3000
+#define CONE_UP 1765
+
+#define LIFT_DOWN 3920
+#define LIFT_HALF 3000
+#define LIFT_UP 1765
 
 void liftControl(void *parameter);
-void setLiftAngle(int liftAngle);
+int getLiftState();
+
+void setMogoAngle(int liftAngle);
+void setConeAngle(int liftAngle);
+void setLiftState(int state);
+void setLiftHeight(int liftAngle);

@@ -8,11 +8,14 @@
 #include <stdbool.h>
 
 /* Motors */
-#define rightMotorR 2
-#define rightMotorF 3
-#define liftMotor 7
-#define leftMotorR 8
-#define leftMotorF 9
+#define goliathMotor 1
+#define rightMotorR 2 // Y Cabeled
+#define rightMotorF 3 // Power Expander
+#define liftMotor 4 // Y Cabled, Power Expander
+#define mogoMotor 7 // Y Cabled
+#define leftMotorR 8 // Power Expander
+#define leftMotorF 9 // Y Cabled
+#define coneLiftMotor 10
 
 #define MOTOR_SMOOTH_FACTOR 0.1
 

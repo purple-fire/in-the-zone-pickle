@@ -40,10 +40,9 @@ extern "C" {
 #define QUAD_BOTTOM_PORT_RIGHT  4
 
 #define MOGO_POT_PORT 2
+#define LIFT_POT_PORT 3
+#define CONE_POT_PORT 5
 
-#define LINE_RIGHT_PORT 5
-#define LINE_CENTER_PORT 6
-#define LINE_LEFT_PORT 7
 
 extern Ultrasonic sonar;
 extern Encoder BLEncoder;
@@ -60,9 +59,10 @@ extern int tickGoal,
            turnError,
            turnPower,
 
-           liftToggle,
-           desiredLiftAngle,
-           liftPosition,
+           mogoToggle,
+           coneToggle,
+           mogoTarget,
+           mogoPosition,
 
            gyroValue,
            gyroOffset,

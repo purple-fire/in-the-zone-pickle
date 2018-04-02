@@ -7,12 +7,13 @@
 
 typedef struct PIDData
 {
+	int enabled, target;
 	float kp, ki, kd;
 
 	float lastError;
 	float integral;
 	int errorCount;
-	
+
 	float maxPower;
 	float integralRange;
 	float minimumInput, maximumInput;

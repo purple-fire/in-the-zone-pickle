@@ -12,10 +12,13 @@ void pidDataReset(PIDData *data)
     data->errorCount = 0;
 }
 
+
 void pidDataInit(PIDData *data,
         float kp, float ki, float kd, float maxPower,
         float inputRange, float integralRange)
 {
+    data->enabled = 1;
+    data->target = 0;
     data->kp = kp;
     data->ki = ki;
     data->kd = kd;

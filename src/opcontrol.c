@@ -73,36 +73,34 @@ static void driverControl(void *parameter) {
   }
 }
 
+/*
 static void startAutoPilot(void *parameter) {
   chassisStopSmooth();
   autonomous();
 }
+*/
 
 void operatorControl() {
-  TaskHandle autoPilotHandle, driverControlHandle;
+  TaskHandle driverControlHandle;
+  //TaskHandle autoPilotHandle, driverControlHandle;
   driveMode = DRIVE_ARCADE;
   driverControlHandle = taskCreate(driverControl, TASK_DEFAULT_STACK_SIZE, NULL,
                                    TASK_PRIORITY_DEFAULT);
 
-  setLiftAngle(LIFT_UP);
-  liftToggle = 1;
+  setMogoAngle(MOGO_UP);
+  mogoToggle = 1;
 
   while (true) {
-    if (driveMode != DRIVE_AUTO && (joystickGetDigital(1, 8, JOY_RIGHT) == 1)) {
+    motorSet(5,-127); //ALWAYS SET PIN 5 HIGH
+
+    if (driveMode != DRIVE_AUTO && (joystickGetDigital(1, 7, JOY_LEFT) == 1)) {
       taskDelete(driverControlHandle);
-      autoPilotHandle = taskCreate(startAutoPilot, TASK_DEFAULT_STACK_SIZE,
-                                   NULL, TASK_PRIORITY_DEFAULT);
+      //autoPilotHandle = taskCreate(startAutoPilot, TASK_DEFAULT_STACK_SIZE,
+      //                             NULL, TASK_PRIORITY_DEFAULT);
       driveMode = DRIVE_AUTO;
-    } else if (joystickGetDigital(1, 8, JOY_UP) == 1) {
+    }else if (joystickGetDigital(1, 7, JOY_DOWN) == 1) {
       if (driveMode == DRIVE_AUTO) {
-        taskDelete(autoPilotHandle);
-        driverControlHandle = taskCreate(driverControl, TASK_DEFAULT_STACK_SIZE,
-                                         NULL, TASK_PRIORITY_DEFAULT);
-      }
-      driveMode = DRIVE_TANK;
-    } else if (joystickGetDigital(1, 8, JOY_DOWN) == 1) {
-      if (driveMode == DRIVE_AUTO) {
-        taskDelete(autoPilotHandle);
+        //taskDelete(autoPilotHandle);
         driverControlHandle = taskCreate(driverControl, TASK_DEFAULT_STACK_SIZE,
                                          NULL, TASK_PRIORITY_DEFAULT);
       }
@@ -110,17 +108,39 @@ void operatorControl() {
     }
 
     if (driveMode != DRIVE_AUTO) {
-      if (joystickGetDigital(1, 6, JOY_UP) == 1) {
-        setLiftAngle(LIFT_UP);
-      } else if (joystickGetDigital(1, 6, JOY_DOWN) == 1) {
-        setLiftAngle(LIFT_DOWN);
-      } else if (joystickGetDigital(1, 5, JOY_DOWN) == 1 || joystickGetDigital(1, 5, JOY_UP) == 1) {
-        setLiftAngle(LIFT_HALF);
-      }
-    }
 
+      if (joystickGetDigital(1, 6, JOY_UP) == 1) {
+        setMogoAngle(MOGO_UP);
+      } else if (joystickGetDigital(1, 6, JOY_DOWN) == 1) {
+        setMogoAngle(MOGO_DOWN);
+      } else if (joystickGetDigital(1, 5, JOY_DOWN) == 1 || joystickGetDigital(1, 5, JOY_UP) == 1) {
+        setMogoAngle(MOGO_HALF);
+      }
+
+      if (joystickGetDigital(1, 8, JOY_LEFT) == 1) {
+        setConeAngle(CONE_UP);
+      } else if (joystickGetDigital(1, 8, JOY_RIGHT) == 1) {
+        setConeAngle(CONE_DOWN);
+      }
+
+      if (joystickGetDigital(1, 8, JOY_UP) == 1) {
+        motorSet(liftMotor,-127);
+        setLiftState(0);
+      } else if (joystickGetDigital(1, 8, JOY_DOWN) == 1) {
+        motorSet(liftMotor,127);
+        setLiftState(0);
+      }
+
+      if((getLiftState()==0)&&((joystickGetDigital(1, 8, JOY_DOWN) == 0)&&(joystickGetDigital(1, 8, JOY_UP) == 0))){
+        setLiftHeight(analogRead(LIFT_POT_PORT));
+        setLiftState(1);
+      }
+
+    }
+    printf("Postition: %d\n",analogRead(CONE_POT_PORT));
     delay(50);
   }
-  taskDelete(autoPilotHandle);
+  //taskDelete(autoPilotHandle);
   taskDelete(driverControlHandle);
+
 }
