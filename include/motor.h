@@ -12,6 +12,7 @@
 #define rightMotorR 2 // Y Cabeled
 #define rightMotorF 3 // Power Expander
 #define liftMotor 4 // Y Cabled, Power Expander
+#define liftMotorAux 6
 #define mogoMotor 7 // Y Cabled
 #define leftMotorR 8 // Power Expander
 #define leftMotorF 9 // Y Cabled

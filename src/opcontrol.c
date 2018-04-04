@@ -90,17 +90,18 @@ void operatorControl() {
   setMogoAngle(MOGO_UP);
   mogoToggle = 1;
   setConeAngle(CONE_UP);
-  setLiftState(2);
+
+  int toggleCone = 0;//,toggleLift,toggleMogo;
 
   while (true) {
-    motorSet(5,-127); //ALWAYS SET PIN 5 HIGH
+    //motorSet(5,-127); //SET PIN 5 HIGH
 
     if (driveMode != DRIVE_AUTO && (joystickGetDigital(1, 7, JOY_LEFT) == 1)) {
       taskDelete(driverControlHandle);
       //autoPilotHandle = taskCreate(startAutoPilot, TASK_DEFAULT_STACK_SIZE,
       //                             NULL, TASK_PRIORITY_DEFAULT);
       driveMode = DRIVE_AUTO;
-    }else if (joystickGetDigital(1, 7, JOY_DOWN) == 1) {
+    }else if (joystickGetDigital(1, 7, JOY_RIGHT) == 1) {
       if (driveMode == DRIVE_AUTO) {
         //taskDelete(autoPilotHandle);
         driverControlHandle = taskCreate(driverControl, TASK_DEFAULT_STACK_SIZE,
@@ -119,25 +120,37 @@ void operatorControl() {
         setMogoAngle(MOGO_HALF);
       }
 
-      if (joystickGetDigital(1, 8, JOY_UP) == 1) {
+      if ((joystickGetDigital(1, 8, JOY_RIGHT) == 1)&&(getConeAngle()==CONE_DOWN)&&(toggleCone==0)) {
+        setConeAngle(CONE_HALF);
+        toggleCone = 1;
+      }
+      else if ((joystickGetDigital(1, 8, JOY_RIGHT) == 1)&&(getConeAngle()==CONE_HALF)&&(toggleCone==0)) {
         setConeAngle(CONE_UP);
-      } else if (joystickGetDigital(1, 8, JOY_RIGHT) == 1) {
+        toggleCone = 1;
+      } else if (joystickGetDigital(1, 8, JOY_LEFT) == 1&&(toggleCone==0)) {
         setConeAngle(CONE_DOWN);
+        toggleCone = 1;
+      }
+      if ((joystickGetDigital(1, 8, JOY_LEFT) == 0) && (joystickGetDigital(1, 8, JOY_RIGHT) == 0)) {
+        toggleCone = 0;
       }
 
-      if (joystickGetDigital(1, 8, JOY_LEFT) == 1) {
+      if (joystickGetDigital(1, 8, JOY_UP) == 1) {
         motorSet(liftMotor,-127);
+        motorSet(liftMotorAux,-127);
       } else if (joystickGetDigital(1, 8, JOY_DOWN) == 1) {
         motorSet(liftMotor,127);
+        motorSet(liftMotorAux,127);
       }
       else{
-        motorSet(liftMotor,0);        
+        motorSet(liftMotor,0);
+        motorSet(liftMotorAux,0);
       }
 
       if (joystickGetDigital(1, 7, JOY_UP) == 1) {
-        motorSet(goliathMotor,-127);
-      } else if (joystickGetDigital(1, 7, JOY_RIGHT) == 1) {
         motorSet(goliathMotor,127);
+      } else if (joystickGetDigital(1, 7, JOY_DOWN) == 1) {
+        motorSet(goliathMotor,-127);
       }
       else{
         motorSet(goliathMotor,0);
