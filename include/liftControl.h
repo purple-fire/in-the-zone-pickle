@@ -5,7 +5,7 @@
 #include "main.h"
 
 #define MOGO_DOWN 1290
-#define MOGO_HALF 1860
+#define MOGO_HALF 2000
 #define MOGO_UP 2750
 
 #define CONE_DOWN 3920

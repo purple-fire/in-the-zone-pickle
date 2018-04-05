@@ -116,25 +116,54 @@ void operatorControl() {
         setMogoAngle(MOGO_UP);
       } else if (joystickGetDigital(1, 6, JOY_DOWN) == 1) {
         setMogoAngle(MOGO_DOWN);
+
       } else if (joystickGetDigital(1, 5, JOY_DOWN) == 1 || joystickGetDigital(1, 5, JOY_UP) == 1) {
         setMogoAngle(MOGO_HALF);
       }
 
-      if ((joystickGetDigital(1, 8, JOY_RIGHT) == 1)&&(getConeAngle()==CONE_DOWN)&&(toggleCone==0)) {
+
+//Automated controls for the cone arm
+
+//Toggle Cone states:
+//Top:  1
+//Mid:  0
+//Btm: -1
+
+//Cone arm is at the bottom. Press RIGHT to go to middle.
+      if ((joystickGetDigital(1, 8, JOY_RIGHT) == 1)&&(toggleCone==-1)) {
         setConeAngle(CONE_HALF);
-        toggleCone = 1;
+        toggleCone = 0;
+
       }
-      else if ((joystickGetDigital(1, 8, JOY_RIGHT) == 1)&&(getConeAngle()==CONE_HALF)&&(toggleCone==0)) {
+//Cone arm is at the middle. press RIGHT to go to up.
+      else if ((joystickGetDigital(1, 8, JOY_RIGHT) == 1)&&(toggleCone==0)) {
         setConeAngle(CONE_UP);
         toggleCone = 1;
-      } else if (joystickGetDigital(1, 8, JOY_LEFT) == 1&&(toggleCone==0)) {
+
+//Cone arm is at the middle. Press LEFT to have the arm bob down, pick up a cone, and bob back up to middle.
+}      else if ((joystickGetDigital(1, 8, JOY_LEFT) == 1)&&(toggleCone==0)) {
         setConeAngle(CONE_DOWN);
-        toggleCone = 1;
-      }
-      if ((joystickGetDigital(1, 8, JOY_LEFT) == 0) && (joystickGetDigital(1, 8, JOY_RIGHT) == 0)) {
+
+        while (joystickGetDigital(1, 8, JOY_LEFT) == 1){
+
+        
+        motorSet(goliathMotor,127);
+        }
+        setConeAngle(CONE_HALF);
+        motorSet(goliathMotor,0);
+
+
+//Cone arm is at the top Press LEFT to go to middle or HOLD LEFT to go to bottom.
+}else if (joystickGetDigital(1, 8, JOY_LEFT) == 1 && toggleCone==1)  {
+
+        setConeAngle(CONE_HALF);
         toggleCone = 0;
+
       }
 
+else{
+
+    }
       if (joystickGetDigital(1, 8, JOY_UP) == 1) {
         motorSet(liftMotor,-127);
         motorSet(liftMotorAux,-127);
