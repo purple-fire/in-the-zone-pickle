@@ -61,8 +61,8 @@ void liftControl(void *parameter)
             conePosition = analogRead(CONE_POT_PORT);
             int errorLiftAngle = coneTarget - conePosition;
             int liftPowerOut = pidNextIteration(&coneLift, errorLiftAngle);
-            printf("conePosition: %d\n", conePosition);
-            printf("coneError: %d\n", errorLiftAngle);
+            //printf("conePosition: %d\n", conePosition);
+            //printf("coneError: %d\n", errorLiftAngle);
             motorSet(coneLiftMotor,liftPowerOut);
         }
         else
@@ -70,7 +70,8 @@ void liftControl(void *parameter)
             motorStop(coneLiftMotor);
         }
 
-        //printf("liftPosition: %d\n", liftPosition);
+        liftPosition = analogRead(LIFT_POT_PORT);
+        printf("liftPosition: %d\n", liftPosition);
         //printf("liftPower: %d\n", liftPowerOut);
 
         /*
