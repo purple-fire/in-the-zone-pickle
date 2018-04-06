@@ -12,9 +12,9 @@
 #define CONE_HALF 3000
 #define CONE_UP 1765
 
-#define LIFT_DOWN 3920
-#define LIFT_HALF 3000
-#define LIFT_UP 1765
+#define LIFT_DOWN 3960
+#define LIFT_HALF 3350
+#define LIFT_UP 1820
 
 #define GOLIATH_IN 64
 #define GOLIATH_OUT -127
