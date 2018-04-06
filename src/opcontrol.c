@@ -52,16 +52,22 @@ static void driverControl(void *parameter) {
       int leftPower = joyLeft + joyRight;
       int rightPower = joyLeft - joyRight;
 
+      int motorMAX = MOTOR_POWER_MAX;
+
+      if(leftPower!=rightPower){
+        motorMAX = 100;
+      }
+
       if (ABS(leftPower) <= 8) {
         leftMotorsBrake();
       } else {
-        leftMotorsSet(leftPower * MOTOR_POWER_MAX / 127);
+        leftMotorsSet(leftPower * motorMAX / 127);
       }
 
       if (ABS(rightPower) <= 8) {
         rightMotorsBrake();
       } else {
-        rightMotorsSet(rightPower * MOTOR_POWER_MAX / 127);
+        rightMotorsSet(rightPower * motorMAX / 127);
       }
 
     } else {
