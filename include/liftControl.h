@@ -16,6 +16,9 @@
 #define LIFT_HALF 3000
 #define LIFT_UP 1765
 
+#define GOLIATH_IN 64
+#define GOLIATH_OUT -127
+
 void liftControl(void *parameter);
 
 void setMogoAngle(int liftAngle);

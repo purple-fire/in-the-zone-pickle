@@ -148,9 +148,7 @@ void operatorControl() {
         setConeAngle(CONE_DOWN);
 
         while (joystickGetDigital(1, 8, JOY_LEFT) == 1){
-
-
-        motorSet(goliathMotor,64);
+          motorSet(goliathMotor,GOLIATH_IN);
         }
         setConeAngle(CONE_HALF);
         motorSet(goliathMotor,0);
@@ -180,9 +178,9 @@ else{
       }
 
       if (joystickGetDigital(1, 7, JOY_UP) == 1) {
-        motorSet(goliathMotor,64);
+        motorSet(goliathMotor,GOLIATH_IN);
       } else if (joystickGetDigital(1, 7, JOY_DOWN) == 1) {
-        motorSet(goliathMotor,-127);
+        motorSet(goliathMotor,GOLIATH_OUT);
       }
       else{
         motorSet(goliathMotor,0);
