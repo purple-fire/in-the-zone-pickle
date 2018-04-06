@@ -16,7 +16,7 @@
 #define mogoMotor 7 // Y Cabled
 #define leftMotorR 8 // Power Expander
 #define leftMotorF 9 // Y Cabled
-#define coneLiftMotor 10
+#define coneLiftMotor 5 //Power Expander
 
 #define MOTOR_SMOOTH_FACTOR 0.1
 

@@ -20,7 +20,7 @@
 typedef enum { DRIVE_AUTO, DRIVE_TANK, DRIVE_ARCADE } DriveMode;
 
 DriveMode driveMode;
-
+int liftPosition;
 /**
  * Driver control with tank-style controls.
  */
@@ -28,6 +28,7 @@ static void driverControl(void *parameter) {
   chassisStop();
 
   while (true) {
+
     if (driveMode == DRIVE_TANK) {
       int joyRight = joystickGetAnalog(1, CRY);
       int joyLeft = joystickGetAnalog(1, CLY);
@@ -79,8 +80,9 @@ static void startAutoPilot(void *parameter) {
   autonomous();
 }
 */
-
 void operatorControl() {
+
+
   TaskHandle driverControlHandle;
   //TaskHandle autoPilotHandle, driverControlHandle;
   driveMode = DRIVE_ARCADE;
@@ -95,6 +97,7 @@ void operatorControl() {
 
   while (true) {
     //motorSet(5,-127); //SET PIN 5 HIGH
+
 
     if (driveMode != DRIVE_AUTO && (joystickGetDigital(1, 7, JOY_LEFT) == 1)) {
       taskDelete(driverControlHandle);
@@ -146,8 +149,8 @@ void operatorControl() {
 
         while (joystickGetDigital(1, 8, JOY_LEFT) == 1){
 
-        
-        motorSet(goliathMotor,127);
+
+        motorSet(goliathMotor,64);
         }
         setConeAngle(CONE_HALF);
         motorSet(goliathMotor,0);
@@ -177,7 +180,7 @@ else{
       }
 
       if (joystickGetDigital(1, 7, JOY_UP) == 1) {
-        motorSet(goliathMotor,127);
+        motorSet(goliathMotor,64);
       } else if (joystickGetDigital(1, 7, JOY_DOWN) == 1) {
         motorSet(goliathMotor,-127);
       }
