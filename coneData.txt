@@ -1,0 +1,74 @@
+coneNum 1-3
+
+lift 522,522
+cone 1700
+
+coneNum 4
+
+lift 737,500
+cone 1700
+
+coneNum 5
+
+lift 807,557
+cone 1700
+
+coneNum 6
+
+lift 915,665
+cone 1700
+
+coneNum 7
+
+lift 998,787
+cone 1700
+
+coneNum 8
+
+lift 1077,890
+cone 1700
+
+coneNum 9
+
+lift 1200,1025
+cone 1700
+
+coneNum 10
+
+lift 1380,1135
+cone 1835
+
+coneNum 12
+
+lift 1445,1250
+cone 1835
+
+coneNum 13
+
+lift 1560,1370
+cone 1835
+
+coneNum 14
+
+lift 1675,1485
+cone 1835
+
+coneNum 15
+
+lift 1785,1565
+cone 1835
+
+coneNum 16
+
+lift 1900,1690
+cone 1835
+
+coneNum 17
+
+lift 1995,1825
+cone 1835
+
+coneNum 18
+
+lift 2160,1915
+cone 1835
