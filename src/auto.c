@@ -15,6 +15,15 @@
 
 void autonomous ()
 {
-  autonOne();
+  int autoChoice = 1;
+
+  switch(autoChoice) {
+   case 1:
+      autonOne();
+      break;
+   default :
+      return;
+  }
+  
   return;
 }
