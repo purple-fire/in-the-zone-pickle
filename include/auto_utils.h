@@ -1,10 +1,6 @@
 #include <limits.h>
 
 #include "main.h"
-#include "utilities.h"
-#include "pid.h"
-#include "motor.h"
-#include "liftControl.h"
 
 #ifdef __cplusplus
 extern "C" {

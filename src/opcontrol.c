@@ -187,7 +187,6 @@ else{
         motorSet(goliathMotor,0);
       }
 
-    }
     delay(50);
   }
   //taskDelete(autoPilotHandle);

@@ -4,7 +4,6 @@
 
 #include "main.h"
 
-int numCones = 0;
 
 #define MOGO_DOWN 1290
 #define MOGO_HALF 2000

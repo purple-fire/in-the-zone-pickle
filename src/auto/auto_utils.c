@@ -1,11 +1,10 @@
+#include "main.h"
+#include "auto_utils.h"
+
 #include "utilities.h"
+#include "pid.h"
 #include "motor.h"
 #include "liftControl.h"
-
-#include <limits.h>
-#include "main.h"
-
-#include "auto_utils.h"
 
 void baseControl(float target, float power, float integralRange, float timeOut)
 {

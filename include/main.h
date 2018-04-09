@@ -52,6 +52,7 @@ extern DevGyro gyroDev;
 
 /* Globals so that values can be seen from outside functions. */
 extern int tickGoal,
+           numCones,
            rightError,
            rightPower,
            leftError,

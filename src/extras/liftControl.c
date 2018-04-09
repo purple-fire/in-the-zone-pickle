@@ -42,8 +42,8 @@ void liftControl(void *parameter)
             int errorLiftAngle = mogoTarget - mogoPosition;
             int liftPowerOut = pidNextIteration(&mogoLift, errorLiftAngle);
             liftPosition = analogRead(LIFT_POT_PORT);
-            //printf("mogoPosition: %d\n", mogoPosition);
-            //printf("mogoError: %d\n", errorLiftAngle);
+            printf("mogoPosition: %d\n", mogoPosition);
+            printf("mogoError: %d\n", errorLiftAngle);
             if(ABS(errorLiftAngle)>10){
               motorSet(mogoMotor,-liftPowerOut);
             }

@@ -1,6 +1,11 @@
 #include "main.h"
 #include "auto_utils.h"
 
+#include "utilities.h"
+#include "pid.h"
+#include "motor.h"
+#include "liftControl.h"
+
 void autonOne(){
   devgyroResetTo(&gyroDev, -4);
 
@@ -20,7 +25,7 @@ void autonOne(){
  baseTurn(360 - 135, true, true, 1.0);
  devgyroOffset(&gyroDev, -360);
  driveTime(127, 127, true, 1.0);
- /* setMogoAngle(LIFT_HALF-200); */
+ /* setMogoAngle(MOGO_HALF-200); */
  /* delay(500); */
  driveTime(-127, -127, false, 0.3);
 
@@ -49,7 +54,7 @@ void autonOne(){
  baseControl(25, 80, 10, 2.5);
  delay(100);
  */
- setMogoAngle(LIFT_HALF);
+ setMogoAngle(MOGO_HALF);
  delay(300);
  baseControl(-8, 80, 10, 2.0);
  setMogoAngle(MOGO_UP);
@@ -66,7 +71,7 @@ void autonOne(){
  baseTurn(-135, true, true, 2.0);
  baseControl(32, 80, 10, 2.5);
 
- setMogoAngle(LIFT_HALF);
+ setMogoAngle(MOGO_HALF);
  delay(500);
  baseControl(-25, 80, 10, 2.0);
 
@@ -97,7 +102,7 @@ void autonOne(){
  baseControl(24, 80, 10, 2.0);
  wallBump(10, 30, 3, 45);
 
- setMogoAngle(LIFT_HALF);
+ setMogoAngle(MOGO_HALF);
  delay(200);
  baseControl(-8, 80, 10, 2.5);
  setMogoAngle(MOGO_UP);
@@ -118,7 +123,7 @@ void autonOne(){
  wallBump(10, 25, 3, 45);
 
  //Bump Bar
- setMogoAngle(LIFT_HALF);
+ setMogoAngle(MOGO_HALF);
  delay(500);
  baseControl(-10, 80, 10, 2.0);
  setMogoAngle(MOGO_UP);
