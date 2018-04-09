@@ -55,7 +55,7 @@ static void driverControl(void *parameter) {
       int motorMAX = MOTOR_POWER_MAX;
 
       if(leftPower!=rightPower){
-        motorMAX = 100;
+        motorMAX = 127;
       }
 
       if (ABS(leftPower) <= 8) {
@@ -151,13 +151,8 @@ void operatorControl() {
 
 //Cone arm is at the middle. Press LEFT to have the arm bob down, pick up a cone, and bob back up to middle.
 }      else if ((joystickGetDigital(1, 8, JOY_LEFT) == 1)&&(toggleCone==0)) {
-        setConeAngle(CONE_DOWN);
-
-        while (joystickGetDigital(1, 8, JOY_LEFT) == 1){
-          motorSet(goliathMotor,GOLIATH_IN);
-        }
-        setConeAngle(CONE_HALF);
-        motorSet(goliathMotor,0);
+      pickupCone(1);
+}
 
 
 //Cone arm is at the top Press LEFT to go to middle or HOLD LEFT to go to bottom.

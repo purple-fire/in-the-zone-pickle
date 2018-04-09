@@ -97,6 +97,57 @@ void liftControl(void *parameter)
     }
 }
 
+void moveConeGround(){
+  if (numCones < 3){
+  setConeAngle(CONE_HALF);
+  setLiftHeight(LIFT_DOWN);
+  }
+  else{
+    motorSet(goliathMotor,GOLIATH_OUT);
+    setLiftHeight(numCones*LIFT_INC + 100);
+    motorSet(goliathMotor,0);
+    setConeAngle(CONE_HALF);
+    setLiftHeight(LIFT_DOWN);
+  }
+}
+
+void moveConeLoader(){
+
+}
+void stackCone(){
+  numCones++;
+  if (numCones < 3){
+    setLiftHeight(LIFT_DOWN);
+  }
+  else{
+    setLiftHeight(numCones*LIFT_INC + 100);
+    setConeAngle(CONE_UP);
+    setLiftHeight(numCones*LIFT_INC);
+
+
+  }
+
+}
+
+void pickupCone(int mode){
+
+  if (mode == 0){ //Autonomous
+    setConeAngle(CONE_DOWN);
+    motorSet(goliathMotor,GOLIATH_IN);
+    delay(150);
+    setConeAngle(CONE_HALF);
+    motorSet(goliathMotor,0);
+  }
+  else{   //For use in teleop
+    setConeAngle(CONE_DOWN);
+
+    while (joystickGetDigital(1, 8, JOY_LEFT) == 1){
+      motorSet(goliathMotor,GOLIATH_IN);
+    }
+    setConeAngle(CONE_HALF);
+    motorSet(goliathMotor,0);
+  }
+}
 void setMogoAngle(int liftAngle)
 {
     mogoTarget = liftAngle;
