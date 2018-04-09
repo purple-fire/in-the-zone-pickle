@@ -18,7 +18,7 @@ int coneToggle =1;
 
 int liftTarget = LIFT_DOWN;
 int liftPosition;
-int liftToggle =2;
+int liftToggle =0;
 
 void liftControl(void *parameter)
 {
@@ -63,18 +63,18 @@ void liftControl(void *parameter)
             int liftPowerOut = pidNextIteration(&coneLift, errorLiftAngle);
             printf("conePosition: %d\n", conePosition);
             //printf("coneError: %d\n", errorLiftAngle);
-            //motorSet(coneLiftMotor,liftPowerOut);
+            motorSet(coneLiftMotor,liftPowerOut);
         }
         else
         {
-            //motorStop(coneLiftMotor);
+            motorStop(coneLiftMotor);
         }
 
         liftPosition = analogRead(LIFT_POT_PORT);
         printf("liftPosition: %d\n", liftPosition);
         //printf("liftPower: %d\n", liftPowerOut);
 
-        /*
+
         if (liftToggle==1)
         {
             liftPosition = analogRead(LIFT_POT_PORT);
@@ -91,7 +91,6 @@ void liftControl(void *parameter)
             motorStop(liftMotorAux);
 
         }
-        */
 
         delay(20);
     }
