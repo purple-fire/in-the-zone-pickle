@@ -70,11 +70,7 @@ void liftControl(void *parameter)
             motorStop(coneLiftMotor);
         }
 
-        liftPosition = analogRead(LIFT_POT_PORT);
-        printf("liftPosition: %d\n", liftPosition);
-        //printf("liftPower: %d\n", liftPowerOut);
-
-
+/*
         if (liftToggle==1)
         {
             liftPosition = analogRead(LIFT_POT_PORT);
@@ -91,7 +87,7 @@ void liftControl(void *parameter)
             motorStop(liftMotorAux);
 
         }
-
+*/
         delay(20);
     }
 }
