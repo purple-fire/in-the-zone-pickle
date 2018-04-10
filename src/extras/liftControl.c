@@ -2,11 +2,13 @@
  * Functions for controlling the lift, during both driver control and
  * autonomous.
  */
-
+#include "main.h"
 #include "liftControl.h"
 #include "pid.h"
 #include "utilities.h"
 #include "motor.h"
+int numCones = 0;
+int backupCones = 0;
 //oof
 int mogoTarget = MOGO_UP;
 int mogoPosition;
@@ -99,7 +101,8 @@ void moveConeGround(){
   }
   else{
     motorSet(goliathMotor,GOLIATH_OUT);
-    setLiftHeight(numCones*LIFT_INC + 100);
+    delay(150);
+    setLiftHeight(numCones*LIFT_INC_HALF + 150);
     motorSet(goliathMotor,0);
     setConeAngle(CONE_HALF);
     setLiftHeight(LIFT_DOWN);
@@ -111,19 +114,38 @@ void moveConeLoader(){
 }
 void stackCone(){
   numCones++;
+  backupCones = numCones;
+
   if (numCones < 3){
     setLiftHeight(LIFT_DOWN);
   }
   else{
-    setLiftHeight(numCones*LIFT_INC + 100);
+    setLiftHeight(numCones*LIFT_INC_HALF + 150);
+    if (numCones <= 10){
     setConeAngle(CONE_UP);
-    setLiftHeight(numCones*LIFT_INC);
+  }
+    else{
+    setConeAngle (CONE_UP_OFFSET);
+    }
+    setLiftHeight(numCones*LIFT_INC_HALF);
 
 
   }
 
 }
 
+void decrementCone(){
+  numCones--;
+
+}
+
+void resetCones(){
+  numCones = 0;
+}
+
+void reverseConeState(){
+    numCones = backupCones;
+}
 void pickupCone(int mode){
 
   if (mode == 0){ //Autonomous
@@ -136,7 +158,7 @@ void pickupCone(int mode){
   else{   //For use in teleop
     setConeAngle(CONE_DOWN);
 
-    while (joystickGetDigital(1, 8, JOY_LEFT) == 1){
+    while (CONE_ARM_DOWN_BUTTON == 1){
       motorSet(goliathMotor,GOLIATH_IN);
     }
     setConeAngle(CONE_HALF);

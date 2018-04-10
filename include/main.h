@@ -43,6 +43,25 @@ extern "C" {
 #define LIFT_POT_PORT 3
 #define CONE_POT_PORT 5
 
+#define MOGO_UP_BUTTON joystickGetDigital(1, 6, JOY_UP)
+#define MOGO_DOWN_BUTTON joystickGetDigital(1, 6, JOY_DOWN)
+#define MOGO_DROP_LOW_BUTTON joystickGetDigital(1, 5, JOY_UP)
+#define MOGO_DROP_HIGH_BUTTON joystickGetDigital(1, 5, JOY_DOWN)
+
+#define CONE_ARM_DOWN_BUTTON joystickGetDigital(2, 5, JOY_DOWN)
+#define CONE_ARM_UP_BUTTON joystickGetDigital(2, 6, JOY_DOWN)
+#define LIFT_UP_BUTTON joystickGetDigital(2, 8, JOY_UP)
+#define LIFT_DOWN_BUTTON joystickGetDigital(2, 8, JOY_DOWN)
+
+#define GOLIATH_IN_BUTTON joystickGetDigital(2, 7, JOY_UP)
+#define GOLIATH_OUT_BUTTON joystickGetDigital(2, 7, JOY_DOWN)
+
+#define MODE_SWITCH_LEFT_BUTTON joystickGetDigital(1, 7, JOY_LEFT)
+#define MODE_SWITCH_RIGHT_BUTTON joystickGetDigital(1, 7, JOY_RIGHT)
+
+#define LIFT_CONTROL_SWITCH joystickGetDigital(1, 7, JOY_UP)
+#define CONE_DEC_BUTTON joystickGetDigital(1, 7, JOY_DOWN)
+
 
 extern Ultrasonic sonar;
 extern Encoder BLEncoder;
@@ -53,6 +72,7 @@ extern DevGyro gyroDev;
 /* Globals so that values can be seen from outside functions. */
 extern int tickGoal,
            numCones,
+           backupCones,
            rightError,
            rightPower,
            leftError,
