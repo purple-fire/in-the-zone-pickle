@@ -99,9 +99,9 @@ void operatorControl() {
   driverControlHandle = taskCreate(driverControl, TASK_DEFAULT_STACK_SIZE, NULL,
                                    TASK_PRIORITY_DEFAULT);
 
-  setMogoAngle(MOGO_UP);
+  setMogoAngle(analogRead(MOGO_POT_PORT));
   mogoToggle = 1;
-  setConeAngle(CONE_UP);
+ setConeAngle(analogRead(CONE_POT_PORT));
 
   int toggleCone = 0;//,toggleLift,toggleMogo;
 
@@ -204,10 +204,48 @@ if (liftMode == 0){
 else{
 
     }
+
+    //RD4B Controls
+    //Semi-automated stacking where manual control over the lift is given, but upon release it autostacks
       if (LIFT_UP_BUTTON == 1) {
+
+        while(LIFT_UP_BUTTON == 1){
+          motorSet(liftMotor,-127);
+          motorSet(liftMotorAux,-127);
+        }
+        motorSet(liftMotor,0);
+        motorSet(liftMotorAux,0);
+
+
+        //int originalHeight = analogRead(LIFT_POT_PORT);
+
+        setConeAngle(CONE_UP_OFFSET);
+        delay(250);
+        motorSet(goliathMotor,GOLIATH_IN);
+      //  setLiftHeight(originalHeight - 275);
+        motorSet(liftMotor,64);
+        motorSet(liftMotorAux,64);
+        delay(300);
+        motorSet(liftMotor,0);
+        motorSet(liftMotorAux,0);
+
+        motorSet(goliathMotor,GOLIATH_OUT);
+        motorSet(liftMotor,-64);
+        motorSet(liftMotorAux,-64);
+        delay(300);
+        motorSet(liftMotor,0);
+        motorSet(liftMotorAux,0);
+
+        motorSet(goliathMotor,0);
+
+
+      }
+      if (MANUAL_LIFT_UP_BUTTON == 1){
         motorSet(liftMotor,-127);
         motorSet(liftMotorAux,-127);
-      } else if (LIFT_DOWN_BUTTON == 1) {
+      }
+
+      if (LIFT_DOWN_BUTTON == 1) {
         motorSet(liftMotor,127);
         motorSet(liftMotorAux,127);
       }
@@ -216,6 +254,7 @@ else{
         motorSet(liftMotorAux,0);
       }
 
+//Goliath Controls
       if (GOLIATH_IN_BUTTON  == 1) {
         motorSet(goliathMotor,GOLIATH_IN);
       } else if (GOLIATH_OUT_BUTTON  == 1) {

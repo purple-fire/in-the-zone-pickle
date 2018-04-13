@@ -48,10 +48,12 @@ extern "C" {
 #define MOGO_DROP_LOW_BUTTON joystickGetDigital(1, 5, JOY_UP)
 #define MOGO_DROP_HIGH_BUTTON joystickGetDigital(1, 5, JOY_DOWN)
 
+
 #define CONE_ARM_DOWN_BUTTON joystickGetDigital(2, 5, JOY_DOWN)
 #define CONE_ARM_UP_BUTTON joystickGetDigital(2, 6, JOY_DOWN)
 #define LIFT_UP_BUTTON joystickGetDigital(2, 8, JOY_UP)
 #define LIFT_DOWN_BUTTON joystickGetDigital(2, 8, JOY_DOWN)
+#define MANUAL_LIFT_UP_BUTTON joystickGetDigital(2, 6, JOY_UP)
 
 #define GOLIATH_IN_BUTTON joystickGetDigital(2, 7, JOY_UP)
 #define GOLIATH_OUT_BUTTON joystickGetDigital(2, 7, JOY_DOWN)
