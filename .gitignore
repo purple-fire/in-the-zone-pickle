@@ -1,3 +1,4 @@
 bin/
 .tags
 .lvimrc
+compile_commands.json

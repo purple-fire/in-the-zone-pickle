@@ -8,9 +8,10 @@
 #include "tui.h"
 #include "debug.h"
 #include "motor.h"
+#include "liftControl.h"
 
-#define DB_TABLE_ROWS 10
-#define DB_TABLE_COLS 4
+#define DB_TABLE_ROWS 7
+#define DB_TABLE_COLS 3
 #define DB_TABLE_COL_WIDTH 32
 #define DB_TABLE_VALUE_WIDTH 8
 
@@ -23,15 +24,13 @@
         DB_GET_VALUE_ROW(row), DB_GET_VALUE_COL(col), __VA_ARGS__)
 
 static const char *debugTable[DB_TABLE_ROWS][DB_TABLE_COLS] = {
-    { "AUTONOMUS",      "MISC",         "SENSORS" },
-    { "rightError",     "mogoToggle",   "gyro" },
-    { "rightPower",     "liftTarget",   "rightEncoder" },
-    { "leftError",      "mogoPosition", "leftEncoder" },
-    { "leftPower",      NULL,           "potentiometer" },
-    { "turnError",      NULL,           "Ultrasonic" },
-    { "turnPower",      "lineThresh",   "Center line" },
-    { NULL,             NULL,           "joy L" },
-    { NULL,             NULL,           "joy R" },
+    { "AUTONOMOUS",     "MISC",         "SENSORS" },
+    { "rightError",     "liftTarget",   "liftPosition" },
+    { "rightPower",     "mogoTarget",   "mogoPositoin" },
+    { "leftError",      "coneTarget",   "conePosition" },
+    { "leftPower",      NULL,           "gyro" },
+    { "turnError",      "coneCount",    NULL},
+    { "turnPower",      NULL,           NULL },
 };
 
 static void debugPrintTable(void) {
@@ -53,8 +52,11 @@ static void debugPrintTable(void) {
 }
 
 void debugMonitor(void *parameter) {
-    printf("\rlift_pot: %d", analogReadCalibrated(MOGO_POT_PORT));
+#ifdef WINDOWS
+    /* ANSI Escape codes don't work on windows even though MS says they do */
     return;
+#endif
+
     debugPrintTable();
 
     while (true) {
@@ -76,19 +78,15 @@ void debugMonitor(void *parameter) {
         dbTableValuePrintf(5, 0, "%8d", turnError);
         dbTableValuePrintf(6, 0, "%8d", turnPower);
 
-        dbTableValuePrintf(1, 1, "%8s", mogoToggle ? "on" : "off");
+        dbTableValuePrintf(1, 1, "%8d", liftTarget);
         dbTableValuePrintf(2, 1, "%8d", mogoTarget);
-        dbTableValuePrintf(3, 1, "%8d", mogoPosition);
-        dbTableValuePrintf(6, 1, "%8d", lineThreshold);
+        dbTableValuePrintf(3, 1, "%8d", coneTarget);
+        dbTableValuePrintf(5, 1, "%8d", numCones);
 
-        dbTableValuePrintf(1, 2, "%8d", devgyroGet(&gyroDev));
-        dbTableValuePrintf(2, 2, "%8d", encoderGet(BREncoder));
-        dbTableValuePrintf(3, 2, "%8d", encoderGet(BLEncoder));
-        dbTableValuePrintf(4, 2, "%8d", mogoPosition);
-        dbTableValuePrintf(5, 2, "%8d", ultrasonicGet(sonar));
-        dbTableValuePrintf(6, 2, "%8d", 0);
-        dbTableValuePrintf(7, 2, "%+4d:%+4d", joystickGetAnalog(1, CLY), joystickGetAnalog(1, CLX));
-        dbTableValuePrintf(8, 2, "%+4d:%+4d", joystickGetAnalog(1, CRY), joystickGetAnalog(1, CRX));
+        dbTableValuePrintf(1, 2, "%8d", liftPosition);
+        dbTableValuePrintf(2, 2, "%8d", mogoPosition);
+        dbTableValuePrintf(3, 2, "%8d", conePosition);
+        dbTableValuePrintf(4, 2, "%8d", devgyroGet(&gyroDev));
 
         fflush(stdout);
 

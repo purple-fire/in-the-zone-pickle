@@ -23,6 +23,20 @@
 #define GOLIATH_IN 64
 #define GOLIATH_OUT -127
 
+extern int numCones;
+extern int backupCones;
+extern int mogoTarget;
+extern int mogoPosition;
+extern int mogoToggle;
+
+extern int coneTarget;
+extern int conePosition;
+extern int coneToggle;
+
+extern int liftTarget;
+extern int liftPosition;
+extern int liftToggle;
+
 void liftControl(void *parameter);
 void moveConeGround();
 void moveConeLoader();
@@ -34,3 +48,4 @@ void setMogoAngle(int liftAngle);
 void setConeAngle(int liftAngle);
 int getConeAngle();
 void setLiftHeight(int liftAngle);
+

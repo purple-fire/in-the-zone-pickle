@@ -151,7 +151,7 @@ void wallBump(int threshold, float power, float timeOut, int angle)
     timeOut = timeOut*1000;
 
     while (distance > threshold || distance == ULTRA_BAD_RESPONSE) {
-      distance = ultrasonicGet(sonar);
+      distance = 0; /* TODO Put a sensor on or remove wallBump() altogether */
       rightMotorsSet(power);
       leftMotorsSet(power);
 

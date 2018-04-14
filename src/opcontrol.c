@@ -21,7 +21,7 @@
 typedef enum { DRIVE_AUTO, DRIVE_TANK, DRIVE_ARCADE } DriveMode;
 
 DriveMode driveMode;
-int liftPosition;
+
 int liftMode = 0;
 int steps;
 

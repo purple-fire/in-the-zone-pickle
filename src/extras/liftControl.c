@@ -44,8 +44,6 @@ void liftControl(void *parameter)
             int errorLiftAngle = mogoTarget - mogoPosition;
             int liftPowerOut = pidNextIteration(&mogoLift, errorLiftAngle);
             liftPosition = analogRead(LIFT_POT_PORT);
-            //printf("mogoPosition: %d\n", mogoPosition);
-            //printf("mogoError: %d\n", errorLiftAngle);
             if(ABS(errorLiftAngle)>10){
               motorSet(mogoMotor,-liftPowerOut);
             }
@@ -63,8 +61,6 @@ void liftControl(void *parameter)
             conePosition = analogRead(CONE_POT_PORT);
             int errorLiftAngle = coneTarget - conePosition;
             int liftPowerOut = pidNextIteration(&coneLift, errorLiftAngle);
-            printf("conePosition: %d\n", conePosition);
-            //printf("coneError: %d\n", errorLiftAngle);
             motorSet(coneLiftMotor,liftPowerOut);
         }
         else
@@ -78,8 +74,6 @@ void liftControl(void *parameter)
             liftPosition = analogRead(LIFT_POT_PORT);
             int errorLiftAngle = liftTarget - liftPosition;
             int liftPowerOut = pidNextIteration(&lift, errorLiftAngle);
-            //printf("liftPosition: %d\n", liftPosition);
-            //printf("liftPower: %d\n", liftPowerOut);
             motorSet(liftMotor,-liftPowerOut);
             motorSet(liftMotorAux,-liftPowerOut);
         }

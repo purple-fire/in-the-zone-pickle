@@ -15,8 +15,6 @@
 #include "liftControl.h"
 #include "gyro.h"
 
-Ultrasonic sonar;
-
 Encoder BLEncoder;
 Encoder BREncoder;
 
@@ -56,8 +54,6 @@ void initializeIO() {
  * pre_auton() in other environments can be implemented in this task if desired.
  */
 void initialize() {
-    /* Initialize the ultrasonic */
-    sonar = ultrasonicInit(6, 5);
 
     /* Initialize the gryo */
     devgyroInit(&gyroDev, GYRO_PORT, 259);
@@ -72,11 +68,13 @@ void initialize() {
      * TODO Have a separate callibration portion to get the value for lines.
      */
 
-    /* Calibrate the potentiometer */
-    /* analogCalibrate(POTENTIOMETER_PORT); */
+    /* Calibrate the potentiometers */
+    /*
     analogCalibrate(MOGO_POT_PORT);
     analogCalibrate(LIFT_POT_PORT);
     analogCalibrate(CONE_POT_PORT);
+    */
+
     /* Start the lift task here since it is needed in both autonomous and driver
      * control.
      */
@@ -84,5 +82,5 @@ void initialize() {
             liftControl, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
 
     /* Initialize debugging. */
-//    debugTask = taskCreate(debugMonitor, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
+    debugTask = taskCreate(debugMonitor, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
 }
