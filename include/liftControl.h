@@ -9,12 +9,12 @@
 #define MOGO_HALF 2000
 #define MOGO_DROP_HIGH 2000
 #define MOGO_DROP_LOW 1290
-#define MOGO_UP 2735
+#define MOGO_UP 2760
 
 #define CONE_DOWN 3920
 #define CONE_HALF 3000
-#define CONE_UP 1765
-#define CONE_UP_OFFSET 1835
+#define CONE_UP 1690
+#define CONE_UP_OFFSET 1800
 #define LIFT_DOWN 550
 #define LIFT_LOADER 750
 #define LIFT_INC_HALF 150

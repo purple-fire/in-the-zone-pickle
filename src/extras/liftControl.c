@@ -24,6 +24,11 @@ int liftToggle =0;
 
 void liftControl(void *parameter)
 {
+    /* TODO Is there any benefit of having all three lifts controlled in 1
+     * thread vs 1 thread for eaech component? Is there any benefit of having a
+     * separate thread for lift control at all as opposed to setMogoAngle(),
+     * setConeAngle(), etc. blocking until the position it met?
+     */
 
     // Separate variables to simplify tuning
     PIDData mogoLift;
