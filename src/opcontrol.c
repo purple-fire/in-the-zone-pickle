@@ -105,8 +105,6 @@ void operatorControl() {
 
     int toggleCone = 0;//,toggleLift,toggleMogo;
 
-    bool liftMovingUp = false;
-
     while (true) {
         //motorSet(5,-127); //SET PIN 5 HIGH
 
@@ -191,31 +189,38 @@ void operatorControl() {
                 toggleCone = 1;
             }
 
-            //Cone arm is at the middle. Press LEFT to have the arm bob down,
-            //pick up a cone, and bob back up to middle.
-            else if ((CONE_ARM_DOWN_BUTTON == 1)&&(toggleCone==0)) {
+            else if ((CONE_ARM_DOWN_BUTTON == 1)&&(grabState==GRABBED_STACK)) {
+                ungrabStack();
                 pickupCone(1);
             }
 
-            //Cone arm is at the top Press LEFT to go to middle or HOLD LEFT to
-            //go to bottom.
-            else if (CONE_ARM_DOWN_BUTTON == 1 && toggleCone==1)  {
-                setConeAngle(CONE_HALF);
-                toggleCone = 0;
+            else if (CONE_ARM_DOWN_BUTTON) {
+                switch (grabState) {
+                case GRABBED_STACK:
+                    /* Cone arm is holding the top of the stack
+                     * Move off the stack and drop down to pick up a cone
+                     */
+                    ungrabStack();
+                    pickupCone(1);
+                    break;
 
+                case GRABBED_NONE:
+                case GRABBED_CONE:
+                    /* Cone arm is not holding the top of the stack
+                     * Just pick up a cone
+                     */
+                    pickupCone(1);
+                    break;
+                }
             }
 
             //RD4B Controls
             //Semi-automated stacking where manual control over the lift is
             //given, but upon release it autostacks
             if (LIFT_UP_BUTTON) {
-                liftMovingUp = true;
-                motorSet(liftMotor,-127);
-                motorSet(liftMotorAux,-127);
-            } else if (liftMovingUp) {
-                /* Button released after moving up */
-                liftMovingUp = false;
+                stackCone();
 
+                /*
                 motorSet(liftMotor, 0);
                 motorSet(liftMotorAux, 0);
 
@@ -239,16 +244,19 @@ void operatorControl() {
                 motorSet(liftMotorAux,0);
 
                 motorSet(goliathMotor,0);
+                */
 
             } else if (MANUAL_LIFT_UP_BUTTON == 1){
+                liftToggle = 0;
                 motorSet(liftMotor,-127);
                 motorSet(liftMotorAux,-127);
             } else if (LIFT_DOWN_BUTTON == 1) {
+                liftToggle = 0;
                 motorSet(liftMotor,127);
                 motorSet(liftMotorAux,127);
-            } else{
-                motorSet(liftMotor,0);
-                motorSet(liftMotorAux,0);
+            } else {
+                liftToggle = 1;
+                liftTarget = liftPosition;
             }
 
             //Goliath Controls
@@ -261,8 +269,12 @@ void operatorControl() {
                 motorSet(goliathMotor,0);
             }
 
+            if (CONE_DEC_BUTTON) {
+                decrementNumCones();
+            }
         }
-        delay(50);
+
+        delay(100);
 
     } //End of manual control mode
 
