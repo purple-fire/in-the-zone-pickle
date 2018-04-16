@@ -105,6 +105,11 @@ void operatorControl() {
 
     int toggleCone = 0;//,toggleLift,toggleMogo;
 
+    bool coneArmUpPressed = false,
+         coneArmDownPressed = false,
+         liftUpPressed = false,
+         coneDecPressed = false;
+
     while (true) {
         //motorSet(5,-127); //SET PIN 5 HIGH
 
@@ -168,6 +173,22 @@ void operatorControl() {
         }
         //Automated controls for the cone arm
 
+        if (!CONE_DEC_BUTTON) {
+            coneDecPressed = false;
+        } else if (!coneDecPressed) {
+            decrementNumCones();
+            coneDecPressed = true;
+        }
+
+        //Goliath Controls
+        if (GOLIATH_IN_BUTTON) {
+            motorSet(goliathMotor,GOLIATH_IN);
+        } else if (GOLIATH_OUT_BUTTON) {
+            motorSet(goliathMotor,GOLIATH_OUT);
+        } else {
+            motorStop(goliathMotor);
+        }
+
         //Toggle Cone states:
         //Top:  1
         //Mid:  0
@@ -176,39 +197,37 @@ void operatorControl() {
         //MANUAL LIFT CONTROL
 
         if (liftMode == 0){
-            //Cone arm is at the bottom. Press RIGHT to go to middle.
-            if ((CONE_ARM_UP_BUTTON == 1)&&(toggleCone==1)) {
-                setConeAngle(CONE_UP);
-                toggleCone = 0;
+            /* This if-else setup if used to only perform button actions when a
+             * button is initially pressed, not when it is held down for
+             * multiple iterations of the input loop.
+             */
+            if (!CONE_ARM_UP_BUTTON) {
+                coneArmUpPressed = false;
+            } else if (!coneArmUpPressed) {
+                coneArmUpPressed = true;
 
+                if (toggleCone == 0) {
+                    //Cone arm is at the bottom. Press RIGHT to go to middle.
+                    setConeAngle(CONE_HALF);
+                    toggleCone = 1;
+                } else {
+                    //Cone arm is at the middle. press RIGHT to go to up.
+                    setConeAngle(CONE_UP);
+                    toggleCone = 0;
+                }
             }
 
-            //Cone arm is at the middle. press RIGHT to go to up.
-            else if ((CONE_ARM_UP_BUTTON == 1)&&(toggleCone==0)) {
-                setConeAngle(CONE_DOWN);
-                toggleCone = 1;
-            }
+            if (!CONE_ARM_DOWN_BUTTON) {
+                coneArmDownPressed = false;
+            } else if (!coneArmDownPressed) {
+                coneArmDownPressed = true;
 
-            else if ((CONE_ARM_DOWN_BUTTON == 1)&&(grabState==GRABBED_STACK)) {
-                ungrabStack();
-                pickupCone(1);
-            }
-
-            else if (CONE_ARM_DOWN_BUTTON) {
                 switch (grabState) {
                 case GRABBED_STACK:
-                    /* Cone arm is holding the top of the stack
-                     * Move off the stack and drop down to pick up a cone
-                     */
+                    /* Need to move the intake to clear the stack first */
                     ungrabStack();
-                    pickupCone(1);
-                    break;
-
-                case GRABBED_NONE:
                 case GRABBED_CONE:
-                    /* Cone arm is not holding the top of the stack
-                     * Just pick up a cone
-                     */
+                case GRABBED_NONE:
                     pickupCone(1);
                     break;
                 }
@@ -217,36 +236,15 @@ void operatorControl() {
             //RD4B Controls
             //Semi-automated stacking where manual control over the lift is
             //given, but upon release it autostacks
-            if (LIFT_UP_BUTTON) {
+            if (!LIFT_UP_BUTTON) {
+                liftUpPressed = false;
+            } else if (!liftUpPressed) {
+                liftUpPressed = true;
                 stackCone();
+            }
 
-                /*
-                motorSet(liftMotor, 0);
-                motorSet(liftMotorAux, 0);
-
-                //int originalHeight = analogRead(LIFT_POT_PORT);
-
-                setConeAngle(CONE_UP_OFFSET);
-                delay(250);
-                motorSet(goliathMotor,GOLIATH_IN);
-                // setLiftHeight(originalHeight - 275);
-                motorSet(liftMotor,64);
-                motorSet(liftMotorAux,64);
-                delay(300);
-                motorSet(liftMotor,0);
-                motorSet(liftMotorAux,0);
-
-                motorSet(goliathMotor,GOLIATH_OUT);
-                motorSet(liftMotor,-64);
-                motorSet(liftMotorAux,-64);
-                delay(300);
-                motorSet(liftMotor,0);
-                motorSet(liftMotorAux,0);
-
-                motorSet(goliathMotor,0);
-                */
-
-            } else if (MANUAL_LIFT_UP_BUTTON == 1){
+            /* Only do manual ones if the automated one is not being used */
+            if (MANUAL_LIFT_UP_BUTTON == 1){
                 liftToggle = 0;
                 motorSet(liftMotor,-127);
                 motorSet(liftMotorAux,-127);
@@ -254,23 +252,11 @@ void operatorControl() {
                 liftToggle = 0;
                 motorSet(liftMotor,127);
                 motorSet(liftMotorAux,127);
-            } else {
-                liftToggle = 1;
-                liftTarget = liftPosition;
-            }
-
-            //Goliath Controls
-            if (GOLIATH_IN_BUTTON  == 1) {
-                motorSet(goliathMotor,GOLIATH_IN);
-            } else if (GOLIATH_OUT_BUTTON  == 1) {
-                motorSet(goliathMotor,GOLIATH_OUT);
-            }
-            else{
-                motorSet(goliathMotor,0);
-            }
-
-            if (CONE_DEC_BUTTON) {
-                decrementNumCones();
+            } else if (!liftUpPressed) {
+                /* If nothing is pressed, let it hang */
+                liftToggle = 0;
+                motorStop(liftMotor);
+                motorStop(liftMotorAux);
             }
         }
 

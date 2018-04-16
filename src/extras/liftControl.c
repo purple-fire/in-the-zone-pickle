@@ -138,13 +138,9 @@ void stackCone() {
         return;
     }
 
-    int liftPosPre  = coneStackPositions[numCones].liftPosPre;
-    int liftPosPost = coneStackPositions[numCones].liftPosPost;
-    int conePos     = coneStackPositions[numCones].conePos;
-
-    setLiftHeightBlock(liftPosPre);
-    setConeAngleBlock(conePos);
-    setLiftHeightBlock(liftPosPost);
+    setLiftHeightBlock(coneStackPositions[numCones].liftPosPre);
+    setConeAngleBlock( coneStackPositions[numCones].conePos);
+    setLiftHeightBlock(coneStackPositions[numCones].liftPosPost);
 
     grabState = GRABBED_STACK;
     numCones++;
@@ -226,8 +222,8 @@ void setLiftHeightBlock(int angle) {
     while (ABS(liftPosition - angle) > LIFT_THRESH) {}
 }
 
-void setMogoBlock(int angle) {
-    setMogoHeight(angle);
+void setMogoAngleBlock(int angle) {
+    setMogoAngle(angle);
     while (ABS(mogoPosition - angle) > MOGO_THRESH) {}
 }
 
