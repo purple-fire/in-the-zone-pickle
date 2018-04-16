@@ -28,15 +28,15 @@ GrabState grabState = GRABBED_NONE;
 ConeStackPos coneStackPositions[CONE_COUNT_MAX] = {
     [0]  = {LIFT_DOWN,  LIFT_DOWN,      CONE_UP},
     [1]  = {LIFT_DOWN,  LIFT_DOWN,      CONE_UP},
-    [2]  = {LIFT_DOWN,  LIFT_DOWN,      CONE_UP},
-    [3]  = {158,        LIFT_DOWN,      CONE_UP},
-    [4]  = {277,        15,             CONE_UP},
-    [5]  = {395,        126,            CONE_UP},
-    [6]  = {481,        257,            1165},
-    [7]  = {685,        380,            1180},
-    [8]  = {715,        505,            1180},
-    [9]  = {875,        620,            1190},
-    [10] = {1020,       760,            1200},
+    [2]  = {130,        LIFT_DOWN,      CONE_UP},
+    [3]  = {250,        LIFT_DOWN,      CONE_UP},
+    [4]  = {375,        30,             CONE_UP},
+    [5]  = {475,        165,            CONE_UP},
+    [6]  = {575,        257,            1165},
+    [7]  = {685,        420,            1180},
+    [8]  = {785,        525,            1180},
+    [9]  = {895,        655,            1190},
+    [10] = {1000,       760,            1200},
     [11] = {1150,       855,            1220},
     [12] = {1230,       970,            1220},
     [13] = {1400,       1090,           1220},
@@ -60,10 +60,12 @@ void liftControl(void *parameter)
     pidDataInit(&coneLift, .1, 0, 0, 125, 4095, 150);
 
     PIDData lift;
-    pidDataInit(&lift, .25, 0, 0, 125, 4095, 150);
+    pidDataInit(&lift, .3, 0, 0, 125, 4095, 150);
 
     while (true)
     {
+        int liftPos = analogRead(LIFT_POT_PORT);
+        printf("Lift Height: %d\n",liftPos);
         mogoPosition = analogRead(MOGO_POT_PORT);
         if (mogoToggle==1)
         {
@@ -115,7 +117,7 @@ void liftControl(void *parameter)
 }
 
 void moveConeGround(){
-    if (numCones < 3){
+    if (numCones < 2){
         setConeAngle(CONE_HALF);
         setLiftHeight(LIFT_DOWN);
     }
@@ -142,31 +144,51 @@ void stackCone() {
     int liftPosPost = coneStackPositions[numCones].liftPosPost;
     int conePos     = coneStackPositions[numCones].conePos;
 
-    setLiftHeightBlock(liftPosPre);
-    setConeAngleBlock(conePos);
-    setLiftHeightBlock(liftPosPost);
+
+    setLiftHeight(liftPosPre);
+
+    if (numCones > 1){
+      delay((int)(liftPosPre)*0.5);
+      }
+    setConeAngle(conePos);
+
+    delay(175);
+
+
+    setLiftHeight(liftPosPre - 200);
+
 
     grabState = GRABBED_STACK;
     numCones++;
 }
 
 void ungrabStack() {
-    if (grabState != GRABBED_STACK) {
+
+  if (grabState != GRABBED_STACK) {
         return;
     }
 
     /* Set lift height to the pre-stack height of the previous cone. */
     motorSet(goliathMotor, GOLIATH_OUT);
-    setLiftHeightBlock(numCones == 0
-            ? liftPosition
-            : coneStackPositions[numCones - 1].liftPosPre);
+    int currentLift = digitalRead(LIFT_POT_PORT);
+    if (numCones < 3){
+      setLiftHeight(LIFT_DOWN);
+    }
+    else{
+
+      setLiftHeight(currentLift+300);
+    }
+    delay (250);
+    setConeAngle(CONE_HALF);
+    delay((int)(currentLift + 300)*0.5);
     motorStop(goliathMotor);
-    setConeAngleBlock(CONE_HALF);
+    setLiftHeight(LIFT_DOWN);
 }
 
 void decrementNumCones(){
     if (numCones > 0) {
         numCones--;
+        delay(200);
     }
 }
 
@@ -195,6 +217,7 @@ void pickupCone(int mode) {
         }
 
         setConeAngle(CONE_HALF);
+        delay(100);
         motorSet(goliathMotor,0);
     }
 
@@ -227,12 +250,11 @@ void setLiftHeightBlock(int angle) {
 }
 
 void setMogoBlock(int angle) {
-    setMogoHeight(angle);
+    setMogoAngle(angle);
     while (ABS(mogoPosition - angle) > MOGO_THRESH) {}
 }
 
 void setConeAngleBlock(int angle) {
-    setLiftHeight(angle);
+    setConeAngle(angle);
     while (ABS(conePosition - angle) > CONE_THRESH) {}
 }
-
