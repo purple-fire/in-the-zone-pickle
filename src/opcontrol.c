@@ -154,17 +154,23 @@ void operatorControl() {
 
                 setMogoAngle(MOGO_DOWN);
                 if (liftMode == 1){
-                    resetCones();
+
                 }
 
 
 
             } else if (MOGO_DROP_LOW_BUTTON == 1) {
                 setMogoAngle(MOGO_DROP_LOW);
+                resetCones();
+                char rainbow = 'R';
+                fputc(rainbow,uart1);
             }
 
         } else if (MOGO_DROP_HIGH_BUTTON == 1) {
             setMogoAngle(MOGO_DROP_HIGH);
+            resetCones();
+            char rainbow = 'R';
+            fputc(rainbow,uart1);
         }
         //Automated controls for the cone arm
 

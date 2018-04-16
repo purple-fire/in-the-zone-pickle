@@ -38,6 +38,9 @@ TaskHandle liftControlHandle, debugTask;
  * cannot set up an LCD (lcdInit()).
  */
 void initializeIO() {
+
+//Initialize UART port for serial communication to LEDs
+    usartInit(uart1, 9600, SERIAL_8N1);
 }
 
 /*
