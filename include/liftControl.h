@@ -16,14 +16,14 @@
 #define LIFT_LOADER 750
 #define LIFT_INC_HALF 150
 #define LIFT_INC_FULL 300
-#define LIFT_THRESH 30
+#define LIFT_THRESH 50
 
 #define CONE_START 1060
 #define CONE_DOWN 3110
 #define CONE_HALF 2370
 #define CONE_UP 1125
 #define CONE_UP_OFFSET 1800
-#define CONE_THRESH 10
+#define CONE_THRESH 20
 
 #define CONE_SCORE 2026
 

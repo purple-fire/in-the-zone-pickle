@@ -105,12 +105,12 @@ void liftControl(void *parameter)
             motorSet(liftMotorAux,-liftPowerOut);
         }
         /*
-        else if (liftToggle==2)
-        {
-            motorStop(liftMotor);
-            motorStop(liftMotorAux);
-        }
-        */
+           else if (liftToggle==2)
+           {
+           motorStop(liftMotor);
+           motorStop(liftMotorAux);
+           }
+           */
 
         delay(20);
     }
@@ -140,29 +140,20 @@ void stackCone() {
         return;
     }
 
-<<<<<<< HEAD
     int liftPosPre  = coneStackPositions[numCones].liftPosPre;
     int liftPosPost = coneStackPositions[numCones].liftPosPost;
     int conePos     = coneStackPositions[numCones].conePos;
 
-
     setLiftHeight(liftPosPre);
 
     if (numCones > 1){
-      delay((int)(liftPosPre)*0.5);
-      }
+        delay((int)(liftPosPre)*0.5);
+    }
     setConeAngle(conePos);
 
     delay(175);
 
-
-    setLiftHeight(liftPosPre - 200);
-
-=======
-    setLiftHeightBlock(coneStackPositions[numCones].liftPosPre);
-    setConeAngleBlock( coneStackPositions[numCones].conePos);
-    setLiftHeightBlock(coneStackPositions[numCones].liftPosPost);
->>>>>>> c5e44f4b208edbc55b1b9f7873c9441a99fae06e
+    setLiftHeight(liftPosPost - 100);
 
     grabState = GRABBED_STACK;
     numCones++;
@@ -170,7 +161,7 @@ void stackCone() {
 
 void ungrabStack() {
 
-  if (grabState != GRABBED_STACK) {
+    if (grabState != GRABBED_STACK) {
         return;
     }
 
@@ -178,11 +169,11 @@ void ungrabStack() {
     motorSet(goliathMotor, GOLIATH_OUT);
     int currentLift = digitalRead(LIFT_POT_PORT);
     if (numCones < 3){
-      setLiftHeight(LIFT_DOWN);
+        setLiftHeight(LIFT_DOWN);
     }
     else{
 
-      setLiftHeight(currentLift+300);
+        setLiftHeight(currentLift+300);
     }
     delay (250);
     setConeAngle(CONE_HALF);
@@ -255,11 +246,7 @@ void setLiftHeightBlock(int angle) {
     while (ABS(liftPosition - angle) > LIFT_THRESH) {}
 }
 
-<<<<<<< HEAD
-void setMogoBlock(int angle) {
-=======
 void setMogoAngleBlock(int angle) {
->>>>>>> c5e44f4b208edbc55b1b9f7873c9441a99fae06e
     setMogoAngle(angle);
     while (ABS(mogoPosition - angle) > MOGO_THRESH) {}
 }
