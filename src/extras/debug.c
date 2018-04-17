@@ -30,7 +30,7 @@ static const char *debugTable[DB_TABLE_ROWS][DB_TABLE_COLS] = {
     { "leftError",      "coneTarget",   "conePosition" },
     { "leftPower",      NULL,           "gyro" },
     { "turnError",      "coneCount",    NULL},
-    { "turnPower",      NULL,           NULL },
+    { "turnPower",      "grabState",    NULL },
 };
 
 static void debugPrintTable(void) {
@@ -82,6 +82,7 @@ void debugMonitor(void *parameter) {
         dbTableValuePrintf(2, 1, "%8d", mogoTarget);
         dbTableValuePrintf(3, 1, "%8d", coneTarget);
         dbTableValuePrintf(5, 1, "%8d", numCones);
+        dbTableValuePrintf(6, 1, "%8d", grabState);
 
         dbTableValuePrintf(1, 2, "%8d", liftPosition);
         dbTableValuePrintf(2, 2, "%8d", mogoPosition);

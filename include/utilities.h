@@ -22,4 +22,3 @@
 #define INCHES_TO_TICKS(inches) ((inches) * 360.0 / WHEEL_CIRCUMFERENCE)
 
 #endif
-

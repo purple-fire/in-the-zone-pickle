@@ -108,7 +108,8 @@ void operatorControl() {
     bool coneArmUpPressed = false,
          coneArmDownPressed = false,
          liftUpPressed = false,
-         coneDecPressed = false;
+         coneDecPressed = false,
+         coneIncPressed = false;
 
     while (true) {
         //motorSet(5,-127); //SET PIN 5 HIGH
@@ -186,6 +187,13 @@ void operatorControl() {
             coneDecPressed = true;
         }
 
+        if (!CONE_INC_BUTTON) {
+            coneIncPressed = false;
+        } else if (!coneIncPressed) {
+            incrementNumCones();
+            coneIncPressed = true;
+        }
+
         //Goliath Controls
         if (GOLIATH_IN_BUTTON) {
             motorSet(goliathMotor,GOLIATH_IN);
@@ -230,6 +238,7 @@ void operatorControl() {
 
                 switch (grabState) {
                 case GRABBED_STACK:
+                    liftToggle = 1;
                     /* Need to move the intake to clear the stack first */
                     ungrabStack();
                 case GRABBED_CONE:
@@ -246,6 +255,7 @@ void operatorControl() {
                 liftUpPressed = false;
             } else if (!liftUpPressed) {
                 liftUpPressed = true;
+                liftToggle = 1;
                 stackCone();
             }
 
@@ -266,7 +276,7 @@ void operatorControl() {
             }
         }
 
-        delay(100);
+        delay(20);
 
     } //End of manual control mode
 

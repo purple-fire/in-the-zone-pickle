@@ -12,7 +12,7 @@
 #define MOGO_UP 2760
 #define MOGO_THRESH 10
 
-#define LIFT_DOWN 8
+#define LIFT_DOWN 20
 #define LIFT_LOADER 750
 #define LIFT_INC_HALF 150
 #define LIFT_INC_FULL 300
@@ -20,10 +20,10 @@
 
 #define CONE_START 1060
 #define CONE_DOWN 3110
-#define CONE_HALF 2370
-#define CONE_UP 1125
+#define CONE_HALF 2580
+#define CONE_UP 1160
 #define CONE_UP_OFFSET 1800
-#define CONE_THRESH 20
+#define CONE_THRESH 25
 
 #define CONE_SCORE 2026
 
@@ -82,6 +82,7 @@ void moveConeGround();
 void moveConeLoader();
 void stackCone();
 void resetCones();
+void incrementNumCones();
 void decrementNumCones();
 void pickupCone(int mode);
 void setMogoAngle(int liftAngle);

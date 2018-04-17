@@ -63,7 +63,7 @@ extern "C" {
 
 #define LIFT_CONTROL_SWITCH joystickGetDigital(1, 7, JOY_UP)
 #define CONE_DEC_BUTTON joystickGetDigital(2, 7, JOY_LEFT)
-
+#define CONE_INC_BUTTON joystickGetDigital(2, 7, JOY_RIGHT)
 
 extern Ultrasonic sonar;
 extern Encoder BLEncoder;
