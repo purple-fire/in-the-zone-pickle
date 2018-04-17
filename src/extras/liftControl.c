@@ -167,18 +167,13 @@ void ungrabStack() {
 
     /* Set lift height to the pre-stack height of the previous cone. */
     motorSet(goliathMotor, GOLIATH_OUT);
-    int currentLift = digitalRead(LIFT_POT_PORT);
-    if (numCones < 3){
-        setLiftHeight(LIFT_DOWN);
-    }
-    else{
-
+    int currentLift = analogRead(LIFT_POT_PORT);
+    if (numCones >= 3){
         setLiftHeight(currentLift+300);
+        delay((currentLift + 300) / 2);
     }
-    delay (250);
-    setConeAngle(CONE_HALF);
-    delay((int)(currentLift + 300)*0.5);
     motorStop(goliathMotor);
+    setConeAngle(CONE_HALF);
     setLiftHeight(LIFT_DOWN);
 }
 
