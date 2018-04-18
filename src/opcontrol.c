@@ -84,17 +84,13 @@ static void driverControl(void *parameter) {
     }
 }
 
-/*
-   static void startAutoPilot(void *parameter) {
+static void startAutoPilot(void *parameter) {
    chassisStopSmooth();
    autonomous();
-   }
-   */
+}
+
 void operatorControl() {
-
-
-    TaskHandle driverControlHandle;
-    //TaskHandle autoPilotHandle, driverControlHandle;
+    TaskHandle autoPilotHandle, driverControlHandle;
     driveMode = DRIVE_ARCADE;
     driverControlHandle = taskCreate(driverControl, TASK_DEFAULT_STACK_SIZE, NULL,
             TASK_PRIORITY_DEFAULT);
@@ -140,12 +136,12 @@ void operatorControl() {
 
         if (driveMode != DRIVE_AUTO && (MODE_SWITCH_LEFT_BUTTON == 1)) {
             taskDelete(driverControlHandle);
-            //autoPilotHandle = taskCreate(startAutoPilot, TASK_DEFAULT_STACK_SIZE,
-            //                             NULL, TASK_PRIORITY_DEFAULT);
+            autoPilotHandle = taskCreate(startAutoPilot, TASK_DEFAULT_STACK_SIZE,
+                                         NULL, TASK_PRIORITY_DEFAULT);
             driveMode = DRIVE_AUTO;
         }else if (MODE_SWITCH_RIGHT_BUTTON == 1) {
             if (driveMode == DRIVE_AUTO) {
-                //taskDelete(autoPilotHandle);
+                taskDelete(autoPilotHandle);
                 driverControlHandle = taskCreate(driverControl, TASK_DEFAULT_STACK_SIZE,
                         NULL, TASK_PRIORITY_DEFAULT);
             }
@@ -171,12 +167,12 @@ void operatorControl() {
                 char rainbow = 'R';
                 fputc(rainbow,uart1);
             }
-
-        } else if (MOGO_DROP_HIGH_BUTTON == 1) {
-            setMogoAngle(MOGO_DROP_HIGH);
-            resetCones();
-            char rainbow = 'R';
-            fputc(rainbow,uart1);
+            else if (MOGO_DROP_HIGH_BUTTON == 1) {
+                setMogoAngle(MOGO_DROP_HIGH);
+                resetCones();
+                char rainbow = 'R';
+                fputc(rainbow,uart1);
+            }
         }
         //Automated controls for the cone arm
 
@@ -306,7 +302,7 @@ void operatorControl() {
       } */ //end of automated control mode
 
     // End of while loop
-    //taskDelete(autoPilotHandle);
+    taskDelete(autoPilotHandle);
     taskDelete(driverControlHandle);
 
 }

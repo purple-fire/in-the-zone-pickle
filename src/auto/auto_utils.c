@@ -85,7 +85,7 @@ void baseTurn(float target, bool leftToggle, bool rightToggle, float timeOut)
 
     while ((T1 > (millis() - 350))&&(T2 > (millis() - timeOut))) {
         gyroValue = devgyroGet(&gyroDev);
-
+        printf("Gyro: %d\n", gyroValue);
         turnError = target - gyroValue;
         turnPower = motorPowerLimit(pidNextIteration(&data, turnError));
 

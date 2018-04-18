@@ -16,25 +16,24 @@ void autonOne(){
  delay(700);
 
  //FIRST BASE
- baseControl(60, 80, 10, 2.0);
+ baseControl(55, 80, 10, 2.0);
  setMogoAngle(MOGO_UP);
  delay(500);
  baseControl(-48, 80, 10, 2.0);
- baseTurn(135, true, true, 1.5);
- baseControl(12, 80, 10, 2.0);
- baseTurn(360 - 135, true, true, 1.0);
+ baseTurn(-135, true, true, 1.5);
+
+ //Line Up With 20Pt
+ baseControl(16, 80, 10, 2.0);
+ baseTurn(-225, true, true, 3);
  devgyroOffset(&gyroDev, -360);
+
+ //Score in 20Pt
  driveTime(127, 127, true, 1.0);
- /* setMogoAngle(MOGO_HALF-200); */
- /* delay(500); */
+ setMogoAngle(MOGO_DROP_HIGH);
  driveTime(-127, -127, false, 0.3);
 
- //Bump Bar
- setMogoAngle(MOGO_UP);
- delay(500);
- wallBump(10, 25, 3, -135);
- delay(200);
-
+//BELOW IS SKILLS BOT AUTO!!!
+/*
  //SECOND BASE
  baseControl(-6, 80, 10, 1.5);
  baseTurn(-45, true, true, 1.5);
@@ -50,10 +49,6 @@ void autonOne(){
  baseControl(17, 80, 10, 2.0);
  wallBump(10, 25, 2.0, -135);
 
- /*
- baseControl(25, 80, 10, 2.5);
- delay(100);
- */
  setMogoAngle(MOGO_HALF);
  delay(300);
  baseControl(-8, 80, 10, 2.0);
@@ -130,6 +125,7 @@ void autonOne(){
  baseTurn(95, true, true, 2.0);
  baseControl(-50, 80, 10, 2.0);
 
+*/
  delay(2000);
  return;
 }
