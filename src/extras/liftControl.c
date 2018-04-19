@@ -2,6 +2,9 @@
  * Functions for controlling the lift, during both driver control and
  * autonomous.
  */
+
+#include <limits.h>
+
 #include "main.h"
 #include "liftControl.h"
 #include "pid.h"
@@ -64,8 +67,6 @@ void liftControl(void *parameter)
 
     while (true)
     {
-        int liftPos = analogRead(LIFT_POT_PORT);
-        /* printf("Lift Height: %d\n",liftPos); */
         mogoPosition = analogRead(MOGO_POT_PORT);
         if (mogoToggle==1)
         {
@@ -138,27 +139,27 @@ void moveConeLoader(){
 
 }
 
-void stackCone() {
+bool stackCone() {
     if (numCones >= CONE_COUNT_MAX || grabState == GRABBED_STACK) {
-        return;
+        return false;
     }
 
     int liftPosPre  = coneStackPositions[numCones].liftPosPre;
     int liftPosPost = coneStackPositions[numCones].liftPosPost;
     int conePos     = coneStackPositions[numCones].conePos;
 
-    setLiftHeightBlock(liftPosPre);
-    setConeAngleBlock(conePos);
-    setLiftHeightBlock(liftPosPost);
+    if (!setLiftHeightBlock(liftPosPre, 250))   { return false; }
+    if (!setConeAngleBlock(conePos, 100))       { return false; }
+    if (!setLiftHeightBlock(liftPosPost, 100))  { return false; }
 
     grabState = GRABBED_STACK;
     numCones++;
+    return true;
 }
 
-void ungrabStack() {
-
+bool ungrabStack() {
     if (grabState != GRABBED_STACK) {
-        return;
+        return false;
     }
 
     motorSet(goliathMotor, GOLIATH_OUT);
@@ -167,16 +168,20 @@ void ungrabStack() {
      */
     if (numCones > 3) {
         /* Move up to liftPosPre of the previous cone */
-        setLiftHeightBlock(coneStackPositions[numCones - 1].liftPosPre);
+        if (!setLiftHeightBlock(
+                    coneStackPositions[numCones - 1].liftPosPre, 100)) {
+            motorStop(goliathMotor);
+            return false;
+        }
     } else {
-        delay(250);
+        delay(100);
     }
 
     motorStop(goliathMotor);
-    setConeAngle(CONE_HALF);
-    delay(200);
+    setConeAngleBlock(CONE_HALF, 100);
 
     grabState = GRABBED_NONE;
+    return true;
 }
 
 void incrementNumCones() {
@@ -195,14 +200,13 @@ void resetCones(){
     numCones = 0;
 }
 
-void pickupCone(int mode) {
+bool pickupCone(int mode) {
 
     if (mode == 0) { //Autonomous
         setConeAngle(CONE_DOWN); /* Let setLiftHeightBlock() give enough time */
-        setLiftHeightBlock(LIFT_DOWN);
+        setLiftHeightBlock(LIFT_DOWN, 200);
         motorSet(goliathMotor,GOLIATH_IN);
-        setConeAngle(CONE_HALF); /* Use the manual delay for the goliath */
-        delay(150);
+        setConeAngleBlock(CONE_HALF, 100);
         motorStop(goliathMotor);
     } else {   //For use in teleop
         setConeAngle(CONE_DOWN); /* Let the operator decide when to stop */
@@ -216,11 +220,11 @@ void pickupCone(int mode) {
         }
 
         motorStop(goliathMotor);
-        setConeAngle(CONE_HALF);
-        delay(200);
+        setConeAngleBlock(CONE_HALF, 100); /* Don't do anything if this fails */
     }
 
     grabState = GRABBED_CONE;
+    return true;
 }
 
 void setMogoAngle(int liftAngle)
@@ -243,24 +247,57 @@ void setLiftHeight(int liftAngle)
     liftTarget = liftAngle;
 }
 
-void setLiftHeightBlock(int angle) {
+bool setLiftHeightBlock(int angle, int timeout) {
+    int start = millis();
+    if (timeout < 0) {
+        timeout = INT_MAX;
+    }
+
     setLiftHeight(angle);
     while (ABS(liftPosition - angle) > LIFT_THRESH) {
         delay(20);
+
+        if (millis() - start > timeout) {
+            return false;
+        }
     }
+
+    return true;
 }
 
-void setMogoAngleBlock(int angle) {
+bool setMogoAngleBlock(int angle, int timeout) {
+    int start = millis();
+    if (timeout < 0) {
+        timeout = INT_MAX;
+    }
+
     setMogoAngle(angle);
     while (ABS(mogoPosition - angle) > MOGO_THRESH) {
         delay(20);
+
+        if (millis() - start > timeout) {
+            return false;
+        }
     }
+
+    return true;
 }
 
-void setConeAngleBlock(int angle) {
+bool setConeAngleBlock(int angle, int timeout) {
+    int start = millis();
+    if (timeout < 0) {
+        timeout = INT_MAX;
+    }
+
     setConeAngle(angle);
     while (ABS(conePosition - angle) > CONE_THRESH) {
         delay(20);
+
+        if (millis() - start > timeout) {
+            return false;
+        }
     }
+
+    return true;
 }
 

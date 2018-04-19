@@ -47,7 +47,7 @@ _force_look:
 
 # Looks in subdirectories for things to make
 $(SUBDIRS): %: _force_look
-	@$(MAKE) --no-print-directory -C $@
+	@$(MAKE) -C $@
 
 # Ensure binary directory exists
 $(BINDIR):

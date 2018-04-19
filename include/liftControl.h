@@ -78,21 +78,24 @@ extern int liftToggle;
 extern GrabState grabState;
 
 void liftControl(void *parameter);
+
 void moveConeGround();
 void moveConeLoader();
-void stackCone();
-void resetCones();
+
 void incrementNumCones();
 void decrementNumCones();
-void pickupCone(int mode);
+void resetCones();
+
 void setMogoAngle(int liftAngle);
 void setConeAngle(int liftAngle);
-int getConeAngle();
 void setLiftHeight(int liftAngle);
-void ungrabStack();
+
+bool stackCone();
+bool pickupCone(int mode);
+bool ungrabStack();
 
 /* Blocking versions of lift setters */
-void setLiftHeightBlock(int angle);
-void setMogoAngleBlock(int angle);
-void setConeAngleBlock(int angle);
+bool setLiftHeightBlock(int angle, int timeout);
+bool setMogoAngleBlock(int angle, int timeout);
+bool setConeAngleBlock(int angle, int timeout);
 
