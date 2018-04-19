@@ -5,6 +5,8 @@
 #ifndef UTILITIES_H_
 #define UTILITIES_H_
 
+#include "API.h"
+
 // Stick L/R, Axis X/Y
 #define CRX 1
 #define CRY	2
@@ -20,5 +22,14 @@
 #define WHEEL_CIRCUMFERENCE (WHEEL_DIAMETER * PI)
 
 #define INCHES_TO_TICKS(inches) ((inches) * 360.0 / WHEEL_CIRCUMFERENCE)
+
+#define BLUE_TEAM 'y'
+#define RED_TEAM 'z'
+
+#define LED_SERIAL_PORT uart1
+
+extern int teamColor;
+
+void ledSendConeCount(int count);
 
 #endif

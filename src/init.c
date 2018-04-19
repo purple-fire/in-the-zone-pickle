@@ -14,6 +14,7 @@
 #include "debug.h"
 #include "liftControl.h"
 #include "gyro.h"
+#include "utilities.h"
 
 Encoder BLEncoder;
 Encoder BREncoder;
@@ -38,8 +39,7 @@ TaskHandle liftControlHandle, debugTask;
  * cannot set up an LCD (lcdInit()).
  */
 void initializeIO() {
-
-//Initialize UART port for serial communication to LEDs
+    //Initialize UART port for serial communication to LEDs
     usartInit(uart1, 9600, SERIAL_8N1);
 }
 
@@ -57,6 +57,7 @@ void initializeIO() {
  * pre_auton() in other environments can be implemented in this task if desired.
  */
 void initialize() {
+    setTeamName("POLY1");
 
     /* Initialize the gryo */
     devgyroInit(&gyroDev, GYRO_PORT, 259);
@@ -84,6 +85,8 @@ void initialize() {
     liftControlHandle = taskCreate(
             liftControl, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
 
+    ledSendConeCount(0);
+
     /* Initialize debugging. */
-    //debugTask = taskCreate(debugMonitor, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
+    debugTask = taskCreate(debugMonitor, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
 }

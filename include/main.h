@@ -73,19 +73,12 @@ extern DevGyro gyroDev;
 
 /* Globals so that values can be seen from outside functions. */
 extern int tickGoal,
-           numCones,
-           backupCones,
            rightError,
            rightPower,
            leftError,
            leftPower,
            turnError,
            turnPower,
-
-           mogoToggle,
-           coneToggle,
-           mogoTarget,
-           mogoPosition,
 
            gyroValue,
            gyroOffset,

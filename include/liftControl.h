@@ -13,9 +13,8 @@
 #define MOGO_THRESH 10
 
 #define LIFT_DOWN 20
-#define LIFT_LOADER 750
-#define LIFT_INC_HALF 150
-#define LIFT_INC_FULL 300
+#define LIFT_LOADER 550
+#define LIFT_STATIONARY 800
 #define LIFT_THRESH 50
 
 #define CONE_START 1060
@@ -30,39 +29,35 @@
 #define GOLIATH_IN 64
 #define GOLIATH_OUT -127
 
-#define CONE_COUNT_MAX 16
+#define STACK_CONES_MAX 16
+#define STATIONARY_CONES_MAX 8
 
 typedef enum {
     GRABBED_NONE,
     GRABBED_CONE,
     GRABBED_STACK,
+    GRABBED_STATIONARY,
 } GrabState;
-
-typedef struct {
-    /**
-     * Lift position before moving dropping
-     */
-    int liftPosPre;
-
-    /**
-     * Lift position to drop the cone to.
-     */
-    int liftPosPost;
-
-    /**
-     * Cone lift position (not quite CONE_UP as the stack grows)
-     */
-     int conePos;
-} ConeStackPos;
 
 /**
  * Lift positions for each cone in the stack. Indexed by the current number of
  * cones in the stack (not including the cone being stacked).
  */
-extern ConeStackPos coneStackPositions[CONE_COUNT_MAX];
+typedef struct StackConePos {
+    int liftPosPre;
+    int liftPosPost;
+    int conePos;
+} StackConePos;
+extern StackConePos stackConePositions[STACK_CONES_MAX];
 
-extern int numCones;
-extern int backupCones;
+typedef struct StationaryConePos {
+    int liftPos;
+    int conePos;
+} StationaryConePos;
+extern StationaryConePos stationaryConePositions[STATIONARY_CONES_MAX];
+
+extern int stackConeCount;
+extern int stationaryConeCount;
 extern int mogoTarget;
 extern int mogoPosition;
 extern int mogoToggle;
@@ -82,16 +77,23 @@ void liftControl(void *parameter);
 void moveConeGround();
 void moveConeLoader();
 
-void incrementNumCones();
-void decrementNumCones();
-void resetCones();
+void incStackCones();
+void decStackCones();
+void resetStackCones();
+
+void incStationaryCones();
+void decStationaryCones();
+void resetStationaryCones();
 
 void setMogoAngle(int liftAngle);
 void setConeAngle(int liftAngle);
 void setLiftHeight(int liftAngle);
 
 bool stackCone();
+bool stackConeStationary();
 bool pickupCone(int mode);
+bool pickupConeLoader(int mode);
+bool grabStack(int mode);
 bool ungrabStack();
 
 /* Blocking versions of lift setters */

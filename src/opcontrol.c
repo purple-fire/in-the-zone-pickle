@@ -116,7 +116,7 @@ void operatorControl() {
 
                 liftMode = 1;
                 steps = 0;
-                resetCones();
+                resetStackCones();
                 setConeAngle(CONE_UP);
                 printf("Toggling to auto control...");
                 delay (500);
@@ -163,13 +163,13 @@ void operatorControl() {
 
             } else if (MOGO_DROP_LOW_BUTTON == 1) {
                 setMogoAngle(MOGO_DROP_LOW);
-                resetCones();
+                resetStackCones();
                 char rainbow = 'R';
                 fputc(rainbow,uart1);
             }
             else if (MOGO_DROP_HIGH_BUTTON == 1) {
                 setMogoAngle(MOGO_DROP_HIGH);
-                resetCones();
+                resetStackCones();
                 char rainbow = 'R';
                 fputc(rainbow,uart1);
             }
@@ -179,14 +179,14 @@ void operatorControl() {
         if (!CONE_DEC_BUTTON) {
             coneDecPressed = false;
         } else if (!coneDecPressed) {
-            decrementNumCones();
+            decStackCones();
             coneDecPressed = true;
         }
 
         if (!CONE_INC_BUTTON) {
             coneIncPressed = false;
         } else if (!coneIncPressed) {
-            incrementNumCones();
+            incStackCones();
             coneIncPressed = true;
         }
 
@@ -232,14 +232,19 @@ void operatorControl() {
             } else if (!coneArmDownPressed) {
                 coneArmDownPressed = true;
 
+                liftToggle = 1;
                 switch (grabState) {
                 case GRABBED_STACK:
-                    liftToggle = 1;
                     /* Need to move the intake to clear the stack first */
                     ungrabStack();
+                    pickupCone(1);
+                    break;
                 case GRABBED_CONE:
                 case GRABBED_NONE:
                     pickupCone(1);
+                    break;
+                case GRABBED_STATIONARY:
+                    /* TODO What to do in this case? */
                     break;
                 }
             }

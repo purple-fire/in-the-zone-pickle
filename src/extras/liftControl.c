@@ -11,9 +11,9 @@
 #include "utilities.h"
 #include "motor.h"
 
-int numCones = 0;
-int backupCones = 0;
-//oof
+int stackConeCount = 0;
+int stationaryConeCount = 0;
+
 int mogoTarget = MOGO_UP;
 int mogoPosition;
 int mogoToggle = 1;
@@ -28,7 +28,7 @@ int liftToggle = 1;
 
 GrabState grabState = GRABBED_NONE;
 
-ConeStackPos coneStackPositions[CONE_COUNT_MAX] = {
+StackConePos stackConePositions[STACK_CONES_MAX] = {
     [0]  = {LIFT_DOWN,  LIFT_DOWN,      CONE_UP},
     [1]  = {LIFT_DOWN,  LIFT_DOWN,      CONE_UP},
     [2]  = {40,         LIFT_DOWN,      CONE_UP},
@@ -47,6 +47,17 @@ ConeStackPos coneStackPositions[CONE_COUNT_MAX] = {
     [15] = {1820,       1420,           1200},
 };
 
+StationaryConePos stationaryConePositions[STATIONARY_CONES_MAX] = {
+    [0] = { 790,    2860 },
+    [1] = { 840,    2700 },
+    [2] = { 940,    2700 },
+    [3] = { 1100,   2730 },
+    [4] = { 1220,   2670 },
+    [5] = { 1350,   2730 },
+    [6] = { 1520,   2770 },
+    [7] = { 1630,   2700 },
+};
+
 void liftControl(void *parameter)
 {
     /* TODO Is there any benefit of having all three lifts controlled in 1
@@ -63,7 +74,7 @@ void liftControl(void *parameter)
     pidDataInit(&coneLift, .1, 0, 0, 125, 4095, 150);
 
     PIDData lift;
-    pidDataInit(&lift, 1.0, 0.0, 0.1, 125, 4095, 40);
+    pidDataInit(&lift, 1.0, 0.005, 1.0, 125, 4095, 200);
 
     while (true)
     {
@@ -120,40 +131,64 @@ void liftControl(void *parameter)
     }
 }
 
-void moveConeGround(){
-    if (numCones < 2){
-        setConeAngle(CONE_HALF);
-        setLiftHeight(LIFT_DOWN);
-    }
-    else{
-        motorSet(goliathMotor,GOLIATH_OUT);
-        delay(150);
-        setLiftHeight(numCones*LIFT_INC_HALF + 150);
-        motorSet(goliathMotor,0);
-        setConeAngle(CONE_HALF);
-        setLiftHeight(LIFT_DOWN);
-    }
-}
-
-void moveConeLoader(){
-
-}
-
 bool stackCone() {
-    if (numCones >= CONE_COUNT_MAX || grabState == GRABBED_STACK) {
+    if (stackConeCount >= STACK_CONES_MAX || grabState == GRABBED_STACK) {
         return false;
     }
 
-    int liftPosPre  = coneStackPositions[numCones].liftPosPre;
-    int liftPosPost = coneStackPositions[numCones].liftPosPost;
-    int conePos     = coneStackPositions[numCones].conePos;
+    int liftPosPre  = stackConePositions[stackConeCount].liftPosPre;
+    int liftPosPost = stackConePositions[stackConeCount].liftPosPost;
+    int conePos     = stackConePositions[stackConeCount].conePos;
 
-    if (!setLiftHeightBlock(liftPosPre, 250))   { return false; }
-    if (!setConeAngleBlock(conePos, 100))       { return false; }
-    if (!setLiftHeightBlock(liftPosPost, 100))  { return false; }
+    if (!setLiftHeightBlock(liftPosPre, 2000))  { return false; }
+    if (!setConeAngleBlock(conePos, 1000))      { return false; }
+    if (!setLiftHeightBlock(liftPosPost, 2000)) { return false; }
 
     grabState = GRABBED_STACK;
-    numCones++;
+    incStackCones();
+    return true;
+}
+
+bool stackConeStationary() {
+    if (stationaryConeCount >= STATIONARY_CONES_MAX || stackConeCount < 5) {
+        return false;
+    }
+
+    int liftPos = stationaryConePositions[stationaryConeCount].liftPos;
+    int conePos = stationaryConePositions[stationaryConeCount].conePos;
+
+    if (!setConeAngleBlock(CONE_UP, 1000))   { return false; }
+    if (!setLiftHeightBlock(liftPos, 2000))  { return false; }
+    if (!setConeAngleBlock(conePos, 1000))   { return false; }
+
+    incStationaryCones();
+    return true;
+}
+
+bool grabStack(int mode) {
+    /* With fewer than 5 cones the cone lift doesn't touch the top of the stack.
+     */
+    if (stackConeCount < 5 || grabState == GRABBED_CONE) {
+        /* TODO Should we return true if GRABBED_CONE since the end result of
+         * this is to grab a cone?
+         */
+        return false;
+    }
+
+    int liftPosPre  = stackConePositions[stackConeCount-1].liftPosPre;
+    int conePos     = stackConePositions[stackConeCount-1].conePos;
+    int liftPosPost = stackConePositions[stackConeCount-1].liftPosPost;
+
+    if (!setLiftHeightBlock(liftPosPre, 2000))   { return false; }
+    if (!setConeAngleBlock(conePos, 1000))       { return false; }
+    motorSet(goliathMotor, GOLIATH_IN);
+    if (!setLiftHeightBlock(liftPosPost, 1000))  {
+        motorStop(goliathMotor);
+        return false;
+    }
+    motorStop(goliathMotor);
+
+    grabState = GRABBED_STACK;
     return true;
 }
 
@@ -166,38 +201,77 @@ bool ungrabStack() {
     /* After the 3rd cone the lift needs to move up and the goliath needs to
      * outtake to realse the cone.
      */
-    if (numCones > 3) {
+    if (stackConeCount > 3) {
         /* Move up to liftPosPre of the previous cone */
         if (!setLiftHeightBlock(
-                    coneStackPositions[numCones - 1].liftPosPre, 100)) {
+                    stackConePositions[stackConeCount - 1].liftPosPre,
+                    1000)) {
             motorStop(goliathMotor);
             return false;
         }
     } else {
-        delay(100);
+        /* Give the goliath some time to outtake if the lift is not moved */
+        delay(200);
     }
 
     motorStop(goliathMotor);
-    setConeAngleBlock(CONE_HALF, 100);
+    setConeAngleBlock(CONE_HALF, 1000);
 
     grabState = GRABBED_NONE;
     return true;
 }
 
-void incrementNumCones() {
-    if (numCones < CONE_COUNT_MAX) {
-        numCones++;
+bool ungrabStationary() {
+    if (grabState != GRABBED_STATIONARY) {
+        return false;
+    }
+
+    motorSet(goliathMotor, GOLIATH_OUT);
+    /* Move up to liftPosPre of the previous cone */
+    setLiftHeightBlock(
+            stationaryConePositions[stationaryConeCount].liftPos,
+            1000);
+
+    motorStop(goliathMotor);
+    setConeAngleBlock(CONE_HALF, 1000);
+
+    grabState = GRABBED_NONE;
+    return true;
+}
+
+void incStackCones() {
+    if (stackConeCount < STACK_CONES_MAX) {
+        stackConeCount++;
+        ledSendConeCount(stackConeCount);
     }
 }
 
-void decrementNumCones() {
-    if (numCones > 0) {
-        numCones--;
+void decStackCones() {
+    if (stackConeCount > 0) {
+        stackConeCount--;
+        ledSendConeCount(stackConeCount);
     }
 }
 
-void resetCones(){
-    numCones = 0;
+void resetStackCones(){
+    stackConeCount = 0;
+    ledSendConeCount(stackConeCount);
+}
+
+void incStationaryCones() {
+    if (stationaryConeCount < STATIONARY_CONES_MAX) {
+        stationaryConeCount++;
+    }
+}
+
+void decStationaryCones() {
+    if (stationaryConeCount > 0) {
+        stationaryConeCount--;
+    }
+}
+
+void resetStationaryCones(){
+    stationaryConeCount = 0;
 }
 
 bool pickupCone(int mode) {
@@ -209,7 +283,9 @@ bool pickupCone(int mode) {
         setConeAngleBlock(CONE_HALF, 100);
         motorStop(goliathMotor);
     } else {   //For use in teleop
-        setConeAngle(CONE_DOWN); /* Let the operator decide when to stop */
+        /* Let the operator decide when to stop these */
+        setLiftHeight(LIFT_DOWN);
+        setConeAngle(CONE_DOWN);
 
         /* TODO
          * Don't have a while loop inside an action in teleop (since this blocks
@@ -221,6 +297,36 @@ bool pickupCone(int mode) {
 
         motorStop(goliathMotor);
         setConeAngleBlock(CONE_HALF, 100); /* Don't do anything if this fails */
+    }
+
+    grabState = GRABBED_CONE;
+    return true;
+}
+
+bool pickupConeLoader(int mode) {
+
+    if (mode == 0) { //Autonomous
+        setConeAngle(CONE_DOWN); /* Let setLiftHeightBlock() give enough time */
+        setLiftHeightBlock(LIFT_STATIONARY, 200);
+        motorSet(goliathMotor,GOLIATH_IN);
+        setConeAngleBlock(CONE_HALF, 100);
+        motorStop(goliathMotor);
+    } else {   //For use in teleop
+        /* Let the operator decide when to stop these */
+        setLiftHeight(LIFT_LOADER);
+        setConeAngle(CONE_DOWN);
+
+        /* TODO
+         * Don't have a while loop inside an action in teleop (since this blocks
+         * other button input)
+         */
+        while (CONE_ARM_DOWN_BUTTON == 1){
+            motorSet(goliathMotor,GOLIATH_IN);
+        }
+
+        motorStop(goliathMotor);
+        /* Don't do anything if this times out */
+        setConeAngleBlock(CONE_HALF, 100);
     }
 
     grabState = GRABBED_CONE;
@@ -300,4 +406,3 @@ bool setConeAngleBlock(int angle, int timeout) {
 
     return true;
 }
-
