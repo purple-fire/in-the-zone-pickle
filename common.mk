@@ -47,3 +47,6 @@ AS:=$(MCUPREFIX)as
 CC:=$(MCUPREFIX)gcc
 CPPCC:=$(MCUPREFIX)g++
 OBJCOPY:=$(MCUPREFIX)objcopy
+
+-include $(ROOT)/debug.mk
+

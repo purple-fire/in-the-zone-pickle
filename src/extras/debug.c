@@ -52,11 +52,6 @@ static void debugPrintTable(void) {
 }
 
 void debugMonitor(void *parameter) {
-#ifdef WINDOWS
-    /* ANSI Escape codes don't work on windows even though MS says they do */
-    return;
-#endif
-
     debugPrintTable();
 
     while (true) {

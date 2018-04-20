@@ -88,5 +88,9 @@ void initialize() {
     ledSendConeCount(0);
 
     /* Initialize debugging. */
-    debugTask = taskCreate(debugMonitor, TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
+#ifdef DEBUG
+    /* ANSI Escape codes don't work on windows even though MS says they do */
+    debugTask = taskCreate(debugMonitor,
+            TASK_DEFAULT_STACK_SIZE, NULL, TASK_PRIORITY_DEFAULT);
+#endif
 }
