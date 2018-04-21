@@ -7,7 +7,7 @@
 #include "liftControl.h"
 
 void autonOne(){
-  devgyroResetTo(&gyroDev, -4);
+  devgyroResetTo(&gyroDev, 0);
 
 //Begin!
  //liftToggle = 1;
@@ -42,10 +42,10 @@ void autonOne(){
  motorStop(goliathMotor);
 
 //Score another cone
- baseTurn(15, true, true, 0.5);
+ baseTurn(15, true, true, 1.0);
  delay (200);
  pickupCone(0);
- delay(500);
+ delay(200);
  stackCone();
  delay(300);
  motorSet(goliathMotor, GOLIATH_OUT);
@@ -54,17 +54,26 @@ void autonOne(){
  //Previous Value: 48. Relative to 55 inches above.
  //Back up.
 
- baseControl(-41, 80, 10, 2.0);
+ baseControl(10, 80, 10, 1.0);
+ pickupCone(0);
+ delay(200);
+ stackCone();
+ delay(300);
+ motorSet(goliathMotor, GOLIATH_OUT);
+ delay(300);
+ motorSet(goliathMotor, 0);
+ 
+ baseControl(-51, 80, 10, 2.0);
  delay(500);
 
- baseTurn(-135, true, true, 1.5);
+ baseTurn(45, true, true, 1.5);
 
  //Line Up With 20Pt
- delay(300);
- baseControl(16, 80, 10, 2.0);
- delay(400);
- baseTurn(-225, true, true, 3);
- devgyroOffset(&gyroDev, -360);
+
+ baseControl(-16, 80, 10, 2.0);
+ delay(4000);
+ baseTurn(135, true, true, 1.5);
+ //devgyroOffset(&gyroDev, -360);
 
  //Previous Value: 1.0, 0.3. Not far enough forward.
 
@@ -80,7 +89,7 @@ void autonOne(){
 //Line up with the second Mogo
  delay (500);
 
- baseTurn(-135, true, true, 1.5);
+ baseTurn(360-135, true, true, 1.5);
  setMogoAngle(MOGO_DOWN);
 
 

@@ -119,4 +119,15 @@ void leftMotorsStopSmooth(void) {
     }
 }
 
+int capMotorPower(int power, int cap){
+
+
+  if (ABS(power)> cap){
+    return SIGN(power)*cap;
+  }
+  else{
+    return power;
+  }
+}
+
 /* vim: set tw=80 ft=c: */

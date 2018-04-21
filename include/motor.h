@@ -137,7 +137,7 @@ void rightMotorsStopSmooth(void);
  * Brakes all motors using motorStopSmooth().
  */
 void chassisStopSmooth(void);
-
+int capMotorPower(int power, int cap);
 #endif /* MOTOR_H_ */
 
 /* vim: set tw=80 ft=c: */

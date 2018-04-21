@@ -45,15 +45,11 @@ void baseControl(float target, float power, float integralRange, float timeOut)
         leftError = target - leftEncoderValue;
         leftPower =  motorPowerLimit(pidNextIteration(&leftData, leftError));
 
-        if (leftPower > maxPower){
-          leftPower = maxPower;
-        }
 
-        if (rightPower > maxPower){
-          rightPower = maxPower;
-        }
-        rightMotorsSet(rightPower);
-        leftMotorsSet(leftPower);
+
+
+        rightMotorsSet(capMotorPower(rightPower,maxPower));
+        leftMotorsSet(capMotorPower(leftPower,maxPower));
 
         if((ABS(leftError)>60)||(ABS(rightError)>60)){
             T1 = millis();

@@ -20,6 +20,7 @@
 #define CONE_START 1060
 #define CONE_DOWN 3110
 #define CONE_HALF 2200
+#define CONE_LOADER 1850
 #define CONE_UP 1160
 #define CONE_UP_OFFSET 1800
 #define CONE_THRESH 25

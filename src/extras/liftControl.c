@@ -18,7 +18,7 @@ int mogoTarget = MOGO_UP;
 int mogoPosition;
 int mogoToggle = 1;
 
-int coneTarget = MOGO_UP;
+int coneTarget = CONE_UP;
 int conePosition;
 int coneToggle = 1;
 
@@ -82,7 +82,8 @@ void liftControl(void *parameter)
     {
         mogoPosition = analogRead(MOGO_POT_PORT);
         liftPosition = analogRead(LIFT_POT_PORT);
-        printf("Lift Pos: %d \n", liftPosition);
+        conePosition = analogRead(CONE_POT_PORT);
+
         if (mogoToggle==1)
         {
             int errorLiftAngle = mogoTarget - mogoPosition;
@@ -309,11 +310,10 @@ bool pickupCone(int mode) {
 
     if (mode == 0) { //Autonomous
         setConeAngle(CONE_DOWN); /* Let setLiftHeightBlock() give enough time */
+        setLiftHeightBlock(LIFT_DOWN, 2000);
         motorSet(goliathMotor,GOLIATH_IN);
-        setLiftHeightBlock(LIFT_DOWN, 200);
-        delay(800);
-        setConeAngleBlock(CONE_HALF, 100);
-        delay(300);
+        setLiftHeightBlock(LIFT_DOWN, 1000);
+        setConeAngleBlock(CONE_HALF, 1000);
         motorStop(goliathMotor);
     } else {   //For use in teleop
         /* Let the operator decide when to stop these */
@@ -340,14 +340,16 @@ bool pickupConeLoader(int mode) {
 
     if (mode == 0) { //Autonomous
         setConeAngle(CONE_DOWN); /* Let setLiftHeightBlock() give enough time */
+
         setLiftHeightBlock(LIFT_STATIONARY, 200);
         motorSet(goliathMotor,GOLIATH_IN);
         setConeAngleBlock(CONE_HALF, 100);
         motorStop(goliathMotor);
     } else {   //For use in teleop
         /* Let the operator decide when to stop these */
-        setLiftHeight(LIFT_LOADER);
-        setConeAngle(CONE_DOWN);
+        setLiftHeight(LIFT_DOWN);
+
+        setConeAngle(CONE_LOADER);
 
         /* TODO
          * Don't have a while loop inside an action in teleop (since this blocks
