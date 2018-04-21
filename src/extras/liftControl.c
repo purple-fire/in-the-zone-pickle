@@ -309,10 +309,13 @@ void resetStationaryCones(){
 bool pickupCone(int mode) {
 
     if (mode == 0) { //Autonomous
-        setConeAngle(CONE_DOWN); /* Let setLiftHeightBlock() give enough time */
-        setLiftHeightBlock(LIFT_DOWN, 2000);
         motorSet(goliathMotor,GOLIATH_IN);
-        setLiftHeightBlock(LIFT_DOWN, 1000);
+        setConeAngle(CONE_DOWN); /* Let setLiftHeightBlock() give enough time */
+
+        setLiftHeightBlock(LIFT_DOWN, 2000);
+
+        delay(1000);
+
         setConeAngleBlock(CONE_HALF, 1000);
         motorStop(goliathMotor);
     } else {   //For use in teleop

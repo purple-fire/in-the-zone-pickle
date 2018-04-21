@@ -25,7 +25,7 @@ void autonOne(){
  //FIRST BASE
 
  //Past Distance: 55. Note: Too far. Pushes cone
- baseControl(48, 80, 10, 2.0);
+ baseControl(49, 80, 10, 2.0);
  setMogoAngle(MOGO_UP);
 
  //Score preload cone
@@ -42,10 +42,10 @@ void autonOne(){
  motorStop(goliathMotor);
 
 //Score another cone
- baseTurn(15, true, true, 1.0);
+ baseTurn(16, true, true, 1.3);
  delay (200);
  pickupCone(0);
- delay(200);
+ delay(500);
  stackCone();
  delay(300);
  motorSet(goliathMotor, GOLIATH_OUT);
@@ -54,16 +54,17 @@ void autonOne(){
  //Previous Value: 48. Relative to 55 inches above.
  //Back up.
 
- baseControl(10, 80, 10, 1.0);
+//Score yet another cone
+ baseControl(6, 80, 10, 1.0);
  pickupCone(0);
- delay(200);
+ delay(500);
  stackCone();
  delay(300);
  motorSet(goliathMotor, GOLIATH_OUT);
  delay(300);
  motorSet(goliathMotor, 0);
- 
- baseControl(-51, 80, 10, 2.0);
+
+ baseControl(-46, 80, 10, 2.0);
  delay(500);
 
  baseTurn(45, true, true, 1.5);
@@ -71,8 +72,8 @@ void autonOne(){
  //Line Up With 20Pt
 
  baseControl(-16, 80, 10, 2.0);
- delay(4000);
- baseTurn(135, true, true, 1.5);
+ delay(500);
+ baseTurn(135, true, true, 2.0);
  //devgyroOffset(&gyroDev, -360);
 
  //Previous Value: 1.0, 0.3. Not far enough forward.
@@ -89,7 +90,7 @@ void autonOne(){
 //Line up with the second Mogo
  delay (500);
 
- baseTurn(360-135, true, true, 1.5);
+ baseTurn(360-125, true, true, 1.5);
  setMogoAngle(MOGO_DOWN);
 
 
