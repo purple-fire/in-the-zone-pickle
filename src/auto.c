@@ -12,6 +12,7 @@
  */
 #include "main.h"
 #include "auto_utils.h"
+#include "motor.h"
 
 void autonomous ()
 {
@@ -21,9 +22,12 @@ void autonomous ()
    case 1:
       autonOne();
       break;
+   case 2:
+  //    testAuton();
+      break;
    default :
       return;
   }
-  
+
   return;
 }

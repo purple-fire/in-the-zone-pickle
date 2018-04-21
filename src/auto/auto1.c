@@ -9,28 +9,82 @@
 void autonOne(){
   devgyroResetTo(&gyroDev, -4);
 
- //NOW START!
+//Begin!
+ //liftToggle = 1;
 
+
+ coneToggle = 1;
  mogoToggle = 1;
+ motorSet(liftMotor,-127);
+ motorSet(liftMotorAux,-127);
  setMogoAngle(MOGO_DOWN);
- delay(700);
-
+ delay(300);
+ motorSet(liftMotor,0);
+ motorSet(liftMotorAux,0);
+ delay(400);
  //FIRST BASE
- baseControl(55, 80, 10, 2.0);
+
+ //Past Distance: 55. Note: Too far. Pushes cone
+ baseControl(48, 80, 10, 2.0);
  setMogoAngle(MOGO_UP);
+
+ //Score preload cone
+ delay(800);
+ motorSet(liftMotor,127);
+ motorSet(liftMotorAux,127);
+ delay(300);
+ motorSet(liftMotor,0);
+ motorSet(liftMotorAux,0);
+ delay(250);
+ motorSet(goliathMotor, GOLIATH_OUT);
+ delay(300);
+ incStackCones();
+ motorStop(goliathMotor);
+
+//Score another cone
+ baseTurn(15, true, true, 0.5);
+ delay (200);
+ pickupCone(0);
  delay(500);
- baseControl(-48, 80, 10, 2.0);
+ stackCone();
+ delay(300);
+ motorSet(goliathMotor, GOLIATH_OUT);
+ delay(300);
+ motorSet(goliathMotor, 0);
+ //Previous Value: 48. Relative to 55 inches above.
+ //Back up.
+
+ baseControl(-41, 80, 10, 2.0);
+ delay(500);
+
  baseTurn(-135, true, true, 1.5);
 
  //Line Up With 20Pt
+ delay(300);
  baseControl(16, 80, 10, 2.0);
+ delay(400);
  baseTurn(-225, true, true, 3);
  devgyroOffset(&gyroDev, -360);
 
+ //Previous Value: 1.0, 0.3. Not far enough forward.
+
  //Score in 20Pt
- driveTime(127, 127, true, 1.0);
+
  setMogoAngle(MOGO_DROP_HIGH);
- driveTime(-127, -127, false, 0.3);
+ driveTime(127, 127, true, 1.5);
+
+ driveTime(-127, -127, false, 0.8);
+
+ resetStackCones();
+
+//Line up with the second Mogo
+ delay (500);
+
+ baseTurn(-135, true, true, 1.5);
+ setMogoAngle(MOGO_DOWN);
+
+
+
 
 //BELOW IS SKILLS BOT AUTO!!!
 /*
@@ -128,4 +182,9 @@ void autonOne(){
 */
  delay(2000);
  return;
+}
+
+void testAuton(){
+
+  return;
 }

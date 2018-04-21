@@ -55,6 +55,8 @@ extern "C" {
 #define LIFT_DOWN_BUTTON joystickGetDigital(2, 8, JOY_DOWN)
 #define MANUAL_LIFT_UP_BUTTON joystickGetDigital(2, 6, JOY_UP)
 
+#define STACKING_MODE_CHANGE_BUTTON joystickGetDigital(2, 8, JOY_LEFT)
+
 #define GOLIATH_IN_BUTTON joystickGetDigital(2, 7, JOY_UP)
 #define GOLIATH_OUT_BUTTON joystickGetDigital(2, 7, JOY_DOWN)
 

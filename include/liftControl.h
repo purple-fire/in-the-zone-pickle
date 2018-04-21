@@ -12,14 +12,14 @@
 #define MOGO_UP 2760
 #define MOGO_THRESH 10
 
-#define LIFT_DOWN 20
+#define LIFT_DOWN 40
 #define LIFT_LOADER 550
-#define LIFT_STATIONARY 800
+#define LIFT_STATIONARY 900
 #define LIFT_THRESH 50
 
 #define CONE_START 1060
 #define CONE_DOWN 3110
-#define CONE_HALF 2580
+#define CONE_HALF 2200
 #define CONE_UP 1160
 #define CONE_UP_OFFSET 1800
 #define CONE_THRESH 25
@@ -43,6 +43,8 @@ typedef enum {
  * Lift positions for each cone in the stack. Indexed by the current number of
  * cones in the stack (not including the cone being stacked).
  */
+ extern int stackingMode;
+
 typedef struct StackConePos {
     int liftPosPre;
     int liftPosPost;
@@ -89,8 +91,10 @@ void setMogoAngle(int liftAngle);
 void setConeAngle(int liftAngle);
 void setLiftHeight(int liftAngle);
 
+void changeStackingMode (int mode);
 bool stackCone();
 bool stackConeStationary();
+bool stackConeLoader();
 bool pickupCone(int mode);
 bool pickupConeLoader(int mode);
 bool grabStack(int mode);
@@ -100,4 +104,3 @@ bool ungrabStack();
 bool setLiftHeightBlock(int angle, int timeout);
 bool setMogoAngleBlock(int angle, int timeout);
 bool setConeAngleBlock(int angle, int timeout);
-

@@ -38,11 +38,20 @@ void baseControl(float target, float power, float integralRange, float timeOut)
         leftEncoderValue = encoderGet(BLEncoder);
 
         rightError = target - rightEncoderValue;
+
         rightPower =  motorPowerLimit(pidNextIteration(&rightData, rightError));
+
 
         leftError = target - leftEncoderValue;
         leftPower =  motorPowerLimit(pidNextIteration(&leftData, leftError));
 
+        if (leftPower > maxPower){
+          leftPower = maxPower;
+        }
+
+        if (rightPower > maxPower){
+          rightPower = maxPower;
+        }
         rightMotorsSet(rightPower);
         leftMotorsSet(leftPower);
 
@@ -58,7 +67,7 @@ void baseControl(float target, float power, float integralRange, float timeOut)
 
 void baseTurn(float target, bool leftToggle, bool rightToggle, float timeOut)
 {
-    const float kp = 2.0;
+    const float kp = 1.5;
     const float ki = 0.007;
     const float kd = 1.0;
 

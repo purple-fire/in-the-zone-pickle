@@ -21,14 +21,14 @@
 typedef enum { DRIVE_AUTO, DRIVE_TANK, DRIVE_ARCADE } DriveMode;
 
 DriveMode driveMode;
-
 int liftMode = 0;
 int steps;
-
+int stackingMode = 0;
 /**
  * Driver control with tank-style controls.
  */
 static void driverControl(void *parameter) {
+
     chassisStop();
 
     while (true) {
@@ -84,6 +84,19 @@ static void driverControl(void *parameter) {
     }
 }
 
+void changeStackingMode(int mode){
+  /*
+  Mode and Description
+
+  0: Picking up from the GROUND
+  1: Picking up from the AUTOLOADER
+  2: Stacking from current stack to STATIONARY
+  3: Stacking from current stack to another MOGO
+  */
+  stackingMode = mode;
+  char sendingChar = 'u' + mode;
+  fputc(sendingChar, uart1);
+}
 static void startAutoPilot(void *parameter) {
    chassisStopSmooth();
    autonomous();
@@ -105,10 +118,12 @@ void operatorControl() {
          coneArmDownPressed = false,
          liftUpPressed = false,
          coneDecPressed = false,
-         coneIncPressed = false;
+         coneIncPressed = false,
+         changeStackPressed = false;
 
     while (true) {
         //motorSet(5,-127); //SET PIN 5 HIGH
+
 
 
         if (LIFT_CONTROL_SWITCH == 1){
@@ -152,18 +167,33 @@ void operatorControl() {
 
             if (MOGO_UP_BUTTON == 1) {
                 setMogoAngle(MOGO_UP);
+
             } else if (MOGO_DOWN_BUTTON == 1) {
 
-                setMogoAngle(MOGO_DOWN);
-                if (liftMode == 1){
 
-                }
+                setMogoAngle(MOGO_DOWN);
+
 
 
 
             } else if (MOGO_DROP_LOW_BUTTON == 1) {
                 setMogoAngle(MOGO_DROP_LOW);
+                if (stackConeCount > 5){
+                  int liftPosPre  = stackConePositions[stackConeCount].liftPosPre;
+                  liftToggle = 0;
+                  setConeAngleBlock(CONE_UP_OFFSET, 700);
+
+                  motorSet(goliathMotor, GOLIATH_OUT);
+                  motorSet(liftMotor, -127);
+                  motorSet(liftMotorAux, -127);
+
+                  delay(600);
+                  motorSet(liftMotor, 0);
+                  motorSet(liftMotorAux, 0);
+                  motorSet(goliathMotor, 0);
+                }
                 resetStackCones();
+
                 char rainbow = 'R';
                 fputc(rainbow,uart1);
             }
@@ -173,111 +203,182 @@ void operatorControl() {
                 char rainbow = 'R';
                 fputc(rainbow,uart1);
             }
-        }
-        //Automated controls for the cone arm
+            //Automated controls for the cone arm
 
-        if (!CONE_DEC_BUTTON) {
-            coneDecPressed = false;
-        } else if (!coneDecPressed) {
-            decStackCones();
-            coneDecPressed = true;
-        }
+            if (!CONE_DEC_BUTTON) {
+                coneDecPressed = false;
+            } else if (!coneDecPressed) {
+                decStackCones();
+                coneDecPressed = true;
+            }
 
-        if (!CONE_INC_BUTTON) {
-            coneIncPressed = false;
-        } else if (!coneIncPressed) {
-            incStackCones();
-            coneIncPressed = true;
-        }
+            if (!CONE_INC_BUTTON) {
+                coneIncPressed = false;
+            } else if (!coneIncPressed) {
+                incStackCones();
+                coneIncPressed = true;
+            }
 
-        //Goliath Controls
-        if (GOLIATH_IN_BUTTON) {
-            motorSet(goliathMotor,GOLIATH_IN);
-        } else if (GOLIATH_OUT_BUTTON) {
-            motorSet(goliathMotor,GOLIATH_OUT);
-        } else {
-            motorStop(goliathMotor);
-        }
 
-        //Toggle Cone states:
-        //Top:  1
-        //Mid:  0
-        //Btm: -1
+            if (!STACKING_MODE_CHANGE_BUTTON){
+              changeStackPressed = false;
+            } else if (!changeStackPressed){
 
-        //MANUAL LIFT CONTROL
+              changeStackingMode(stackingMode);
+              stackingMode++;
+              changeStackPressed = true;
+              if (stackingMode == 4){
+                stackingMode = 0;
+              }
 
-        if (liftMode == 0){
-            /* This if-else setup if used to only perform button actions when a
-             * button is initially pressed, not when it is held down for
-             * multiple iterations of the input loop.
-             */
-            if (!CONE_ARM_UP_BUTTON) {
-                coneArmUpPressed = false;
-            } else if (!coneArmUpPressed) {
-                coneArmUpPressed = true;
 
-                if (toggleCone == 0) {
-                    //Cone arm is at the bottom. Press RIGHT to go to middle.
-                    setConeAngle(CONE_HALF);
-                    toggleCone = 1;
-                } else {
-                    //Cone arm is at the middle. press RIGHT to go to up.
-                    setConeAngle(CONE_UP);
-                    toggleCone = 0;
+            }
+
+            //Goliath Controls
+            if (GOLIATH_IN_BUTTON) {
+                motorSet(goliathMotor,GOLIATH_IN);
+            } else if (GOLIATH_OUT_BUTTON) {
+                motorSet(goliathMotor,GOLIATH_OUT);
+            } else {
+                motorStop(goliathMotor);
+            }
+
+            //Toggle Cone states:
+            //Top:  1
+            //Mid:  0
+            //Btm: -1
+
+            //MANUAL LIFT CONTROL
+
+            if (liftMode == 0){
+                /* This if-else setup if used to only perform button actions when a
+                 * button is initially pressed, not when it is held down for
+                 * multiple iterations of the input loop.
+                 */
+                if (!CONE_ARM_UP_BUTTON) {
+                    coneArmUpPressed = false;
+                } else if (!coneArmUpPressed) {
+                    coneArmUpPressed = true;
+
+
+                    if (toggleCone == 0) {
+                        //Cone arm is at the bottom. Press RIGHT to go to middle.
+                        setConeAngle(CONE_HALF);
+                        toggleCone = 1;
+                    } else {
+                        //Cone arm is at the middle. press RIGHT to go to up.
+                        setConeAngle(CONE_UP);
+                        toggleCone = 0;
+                    }
+                }
+
+
+                if (!CONE_ARM_DOWN_BUTTON) {
+                    coneArmDownPressed = false;
+                } else if (!coneArmDownPressed) {
+                    coneArmDownPressed = true;
+
+                        liftToggle = 1;
+
+
+                switch (stackingMode){
+
+                case 0: //NORMAL STACKING FROM THE GROUND
+                        switch (grabState) {
+                        case GRABBED_STACK:
+                            /* Need to move the intake to clear the stack first */
+                            ungrabStack();
+                            pickupCone(1);
+                            break;
+                        case GRABBED_CONE:
+                        case GRABBED_NONE:
+                            pickupCone(1);
+                            break;
+                        case GRABBED_STATIONARY:
+                            /* TODO What to do in this case? */
+                            break;
+                        }
+
+                        break;
+
+               case 1: //Stacking from the autoloader
+                     switch (grabState) {
+                     case GRABBED_STACK:
+                         /* Need to move the intake to clear the stack first */
+                         ungrabStack();
+                         pickupConeLoader(1);
+                         break;
+                     case GRABBED_CONE:
+                     case GRABBED_NONE:
+                         pickupConeLoader(1);
+                         break;
+                     case GRABBED_STATIONARY:
+                         /* TODO What to do in this case? */
+                         break;
+                     }
+               break;
+
+               case 2: //Transfer from the stack to the stationary goal
+
+               break;
+
+               case 3:  //Transfer from the stack to another mogo
+
+               break;
+
+                      }
+                }
+
+                //RD4B Controls
+                //Semi-automated stacking where manual control over the lift is
+                //given, but upon release it autostacks
+                if (!LIFT_UP_BUTTON) {
+                    liftUpPressed = false;
+                } else if (!liftUpPressed) {
+
+                    liftUpPressed = true;
+                    liftToggle = 1;
+
+                    switch (stackingMode){
+                      case 0:
+                      stackCone();
+                      break;
+
+                      case 1:
+                      stackConeLoader();
+                      break;
+
+                      case 2:
+
+                      break;
+
+                      case 3:
+
+                      break;
+                    }
+                    stackCone();
+                }
+
+                /* Only do manual ones if the automated one is not being used */
+                if (MANUAL_LIFT_UP_BUTTON == 1){
+                    liftToggle = 0;
+                    motorSet(liftMotor,-127);
+                    motorSet(liftMotorAux,-127);
+                } else if (LIFT_DOWN_BUTTON == 1) {
+                    liftToggle = 0;
+                    motorSet(liftMotor,127);
+                    motorSet(liftMotorAux,127);
+                } else if (!liftUpPressed) {
+                    /* If nothing is pressed, let it hang */
+                    liftToggle = 0;
+                    motorStop(liftMotor);
+                    motorStop(liftMotorAux);
                 }
             }
 
-            if (!CONE_ARM_DOWN_BUTTON) {
-                coneArmDownPressed = false;
-            } else if (!coneArmDownPressed) {
-                coneArmDownPressed = true;
+            delay(20);
+        } ///END AUTO
 
-                liftToggle = 1;
-                switch (grabState) {
-                case GRABBED_STACK:
-                    /* Need to move the intake to clear the stack first */
-                    ungrabStack();
-                    pickupCone(1);
-                    break;
-                case GRABBED_CONE:
-                case GRABBED_NONE:
-                    pickupCone(1);
-                    break;
-                case GRABBED_STATIONARY:
-                    /* TODO What to do in this case? */
-                    break;
-                }
-            }
-
-            //RD4B Controls
-            //Semi-automated stacking where manual control over the lift is
-            //given, but upon release it autostacks
-            if (!LIFT_UP_BUTTON) {
-                liftUpPressed = false;
-            } else if (!liftUpPressed) {
-                liftUpPressed = true;
-                liftToggle = 1;
-                stackCone();
-            }
-
-            /* Only do manual ones if the automated one is not being used */
-            if (MANUAL_LIFT_UP_BUTTON == 1){
-                liftToggle = 0;
-                motorSet(liftMotor,-127);
-                motorSet(liftMotorAux,-127);
-            } else if (LIFT_DOWN_BUTTON == 1) {
-                liftToggle = 0;
-                motorSet(liftMotor,127);
-                motorSet(liftMotorAux,127);
-            } else if (!liftUpPressed) {
-                /* If nothing is pressed, let it hang */
-                liftToggle = 0;
-                motorStop(liftMotor);
-                motorStop(liftMotorAux);
-            }
-        }
-
-        delay(20);
 
     } //End of manual control mode
 

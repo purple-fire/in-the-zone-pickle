@@ -26,6 +26,8 @@ int liftTarget = LIFT_DOWN;
 int liftPosition;
 int liftToggle = 1;
 
+
+
 GrabState grabState = GRABBED_NONE;
 
 StackConePos stackConePositions[STACK_CONES_MAX] = {
@@ -79,6 +81,8 @@ void liftControl(void *parameter)
     while (true)
     {
         mogoPosition = analogRead(MOGO_POT_PORT);
+        liftPosition = analogRead(LIFT_POT_PORT);
+        printf("Lift Pos: %d \n", liftPosition);
         if (mogoToggle==1)
         {
             int errorLiftAngle = mogoTarget - mogoPosition;
@@ -131,6 +135,9 @@ void liftControl(void *parameter)
     }
 }
 
+
+
+
 bool stackCone() {
     if (stackConeCount >= STACK_CONES_MAX || grabState == GRABBED_STACK) {
         return false;
@@ -148,6 +155,29 @@ bool stackCone() {
     incStackCones();
     return true;
 }
+bool stackConeLoader(){
+  if (stackConeCount >= STACK_CONES_MAX || grabState == GRABBED_STACK) {
+      return false;
+  }
+
+  int liftPosPre  = stackConePositions[stackConeCount].liftPosPre;
+  int liftPosPost = stackConePositions[stackConeCount].liftPosPost;
+  int conePos     = stackConePositions[stackConeCount].conePos;
+
+  if (stackConeCount < 4){
+    if (!setLiftHeightBlock(LIFT_LOADER, 500))  { return false; }
+  }
+  else{
+  if (!setLiftHeightBlock(liftPosPre, 2000))  { return false; }
+
+}
+  if (!setConeAngleBlock(conePos, 1000))      { return false; }
+  if (!setLiftHeightBlock(liftPosPost, 2000)) { return false; }
+  grabState = GRABBED_STACK;
+  incStackCones();
+  return true;
+
+}
 
 bool stackConeStationary() {
     if (stationaryConeCount >= STATIONARY_CONES_MAX || stackConeCount < 5) {
@@ -162,6 +192,7 @@ bool stackConeStationary() {
     if (!setConeAngleBlock(conePos, 1000))   { return false; }
 
     incStationaryCones();
+    decStackCones();
     return true;
 }
 
@@ -278,9 +309,11 @@ bool pickupCone(int mode) {
 
     if (mode == 0) { //Autonomous
         setConeAngle(CONE_DOWN); /* Let setLiftHeightBlock() give enough time */
-        setLiftHeightBlock(LIFT_DOWN, 200);
         motorSet(goliathMotor,GOLIATH_IN);
+        setLiftHeightBlock(LIFT_DOWN, 200);
+        delay(800);
         setConeAngleBlock(CONE_HALF, 100);
+        delay(300);
         motorStop(goliathMotor);
     } else {   //For use in teleop
         /* Let the operator decide when to stop these */
