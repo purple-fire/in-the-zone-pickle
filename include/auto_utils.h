@@ -6,6 +6,8 @@
 extern "C" {
 #endif
 
+#define LOADER_DISTANCE 37
+
 int tickGoal;
 
 int rightError;
@@ -29,7 +31,9 @@ void baseControl(float target, float power, float integralRange, float timeOut);
 void baseTurn(float target, bool leftToggle, bool rightToggle, float timeOut);
 void driveTime(float powerL, float powerR, bool coast, float timeOut);
 void wallBump(int threshold, float power, float timeOut, int angle);
+void loaderAlign(int power, int timeout);
 void autonOne();
+void autoTest();
 
 #ifdef __cplusplus
 }

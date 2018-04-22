@@ -7,194 +7,96 @@
 #include "liftControl.h"
 
 void autonOne(){
-  devgyroResetTo(&gyroDev, 0);
+    int startTime = millis();
 
-//Begin!
- //liftToggle = 1;
+    devgyroResetTo(&gyroDev, 0);
 
+    //Begin!
 
- coneToggle = 1;
- mogoToggle = 1;
- motorSet(liftMotor,-127);
- motorSet(liftMotorAux,-127);
- setMogoAngle(MOGO_DOWN);
- delay(300);
- motorSet(liftMotor,0);
- motorSet(liftMotorAux,0);
- delay(400);
- //FIRST BASE
+    resetStackCones();
+    grabState = GRABBED_STACK; /* Pre-load cone */
+    liftToggle = 0;
+    coneToggle = 1;
+    mogoToggle = 1;
 
- //Past Distance: 55. Note: Too far. Pushes cone
- baseControl(49, 80, 10, 2.0);
- setMogoAngle(MOGO_UP);
+    setMogoAngleBlock(MOGO_DOWN, 750);
+    //FIRST BASE
 
- //Score preload cone
- delay(800);
- motorSet(liftMotor,127);
- motorSet(liftMotorAux,127);
- delay(300);
- motorSet(liftMotor,0);
- motorSet(liftMotorAux,0);
- delay(250);
- motorSet(goliathMotor, GOLIATH_OUT);
- delay(300);
- incStackCones();
- motorStop(goliathMotor);
+    //Past Distance: 55. Note: Too far. Pushes cone
+    baseControl(45, 80, 10, 2.0);
+    setMogoAngleBlock(MOGO_UP, 1500);
 
-//Score another cone
- baseTurn(16, true, true, 1.3);
- delay (200);
- pickupCone(0);
- delay(500);
- stackCone();
- delay(300);
- motorSet(goliathMotor, GOLIATH_OUT);
- delay(300);
- motorSet(goliathMotor, 0);
- //Previous Value: 48. Relative to 55 inches above.
- //Back up.
+    //Score preload cone
+    incStackCones();
+    dropCone();
 
-//Score yet another cone
- baseControl(6, 80, 10, 1.0);
- pickupCone(0);
- delay(500);
- stackCone();
- delay(300);
- motorSet(goliathMotor, GOLIATH_OUT);
- delay(300);
- motorSet(goliathMotor, 0);
+    //Score another cone
+    baseTurn(0, true, true, 1.5);
+    baseControl(7, 80, 10, 1.0);
+    pickupCone(0);
+    stackCone();
+    //Previous Value: 48. Relative to 55 inches above.
+    //Back up.
 
- baseControl(-46, 80, 10, 2.0);
- delay(500);
+    //Score yet another cone
+    baseTurn(0, true, true, 1.5);
+    baseControl(11, 80, 10, 1.0);
+    dropCone();
+    pickupCone(0);
+    stackCone();
+    dropCone();
 
- baseTurn(45, true, true, 1.5);
+    /*
+    //Score yet another yet another cone
+    baseControl(9, 80, 10, 1.0);
+    dropCone();
+    pickupCone(0);
+    stackCone();
+    dropCone();
+    */
 
- //Line Up With 20Pt
+    baseControl(-42, 80, 10, 2.0);
+    baseTurn(45, true, false, 1.0);
 
- baseControl(-16, 80, 10, 2.0);
- delay(500);
- baseTurn(135, true, true, 2.0);
- //devgyroOffset(&gyroDev, -360);
+    //Line Up With 20Pt
 
- //Previous Value: 1.0, 0.3. Not far enough forward.
+    baseControl(-16, 80, 10, 1.5);
+    baseTurn(135, true, true, 1.5);
 
- //Score in 20Pt
+    //Previous Value: 1.0, 0.3. Not far enough forward.
 
- setMogoAngle(MOGO_DROP_HIGH);
- driveTime(127, 127, true, 1.5);
+    //Score in 20Pt
 
- driveTime(-127, -127, false, 0.8);
+    setMogoAngle(MOGO_DROP_HIGH);
+    driveTime(127, 127, true, 1.4);
+    driveTime(-127, -127, false, 0.6);
 
- resetStackCones();
+    resetStackCones();
+    devgyroResetTo(&gyroDev, 135);
 
-//Line up with the second Mogo
- delay (500);
+    //Line up with the second Mogo
+    delay (500);
 
- baseTurn(360-125, true, true, 1.5);
- setMogoAngle(MOGO_DOWN);
+    baseTurn(360-110, true, true, 2.0);
+    setMogoAngleBlock(MOGO_DOWN, 500);
+    baseControl(56, 80, 10, 2.0);
 
+    setMogoAngleBlock(MOGO_UP, 1000);
+    baseControl(-10, 80, 10, 2.0);
+    baseTurn(180, false, true, 2.0);
+    loaderAlign(40, 3000);
 
+    while (millis() - startTime < 40000) {
+        pickupConeLoader(0);
+        stackConeLoader();
+        ungrabStack();
+        delay(500);
+    }
 
+    baseTurn(90, true, true, 1.5);
+    setMogoAngleBlock(MOGO_DOWN, 2000);
+    baseControl(-24, 80, 10, 1.5);
 
-//BELOW IS SKILLS BOT AUTO!!!
-/*
- //SECOND BASE
- baseControl(-6, 80, 10, 1.5);
- baseTurn(-45, true, true, 1.5);
- baseControl(-14, 80, 10, 1.5);
- baseTurn(45, true, true, 1.5);
- setMogoAngle(MOGO_DOWN);
- delay(400);
- baseControl(19, 80, 10, 2.5);
- setMogoAngle(MOGO_UP);
- delay(500);
- baseTurn(360-135, true, true, 2.0);
- devgyroOffset(&gyroDev, -360);
- baseControl(17, 80, 10, 2.0);
- wallBump(10, 25, 2.0, -135);
-
- setMogoAngle(MOGO_HALF);
- delay(300);
- baseControl(-8, 80, 10, 2.0);
- setMogoAngle(MOGO_UP);
-
- //THIRD BASE
- baseTurn(-45, true, true, 2.0);
- baseControl(30, 80, 10, 2.5);
- baseTurn(45, true, true, 2.0);
- setMogoAngle(MOGO_DOWN);
- delay(500);
- baseControl(32, 80, 10, 2.5);
- setMogoAngle(MOGO_UP);
- delay(500);
- baseTurn(-135, true, true, 2.0);
- baseControl(32, 80, 10, 2.5);
-
- setMogoAngle(MOGO_HALF);
- delay(500);
- baseControl(-25, 80, 10, 2.0);
-
- //FOURTH BASE
- baseTurn(45, true, true, 1.5);
- setMogoAngle(MOGO_DOWN);
- baseControl(62, 10, 10, 2.5);
- setMogoAngle(MOGO_UP);
- delay(300);
-
- baseTurn(90, true, true, 1.5);
- baseControl(20, 10, 10, 2.0);
- baseTurn(45, true, true, 0.7);
-
- driveTime(127, 127, true, 1.0);
- driveTime(-127, -127, false, 0.5);
-
- // FIFTH BASE
- baseTurn(-40, true, true, 1.5);
- baseControl(-24, 80, 10, 2.5);
- baseTurn(-135, true, true, 1.5);
- setMogoAngle(MOGO_DOWN);
- delay(300);
- baseControl(19, 80, 10, 2.5);
- setMogoAngle(MOGO_UP);
- baseTurn(45-360, true, true, 2.0);
- devgyroOffset(&gyroDev, 360);
- baseControl(24, 80, 10, 2.0);
- wallBump(10, 30, 3, 45);
-
- setMogoAngle(MOGO_HALF);
- delay(200);
- baseControl(-8, 80, 10, 2.5);
- setMogoAngle(MOGO_UP);
-
- // SIXTH BASE
- baseTurn(135, true, true, 2);
- baseControl(-46, 80, 10, 2.0);
-
- baseTurn(360-90, true, true, 2.0);
- devgyroOffset(&gyroDev, -360);
- setMogoAngle(MOGO_DOWN);
- baseControl(50, 80, 10, 2.0);
- setMogoAngle(MOGO_UP);
- delay(400);
- baseControl(-50, 80, 10, 2.0);
- baseTurn(45, true, false, 0.5);
-
- wallBump(10, 25, 3, 45);
-
- //Bump Bar
- setMogoAngle(MOGO_HALF);
- delay(500);
- baseControl(-10, 80, 10, 2.0);
- setMogoAngle(MOGO_UP);
- baseTurn(95, true, true, 2.0);
- baseControl(-50, 80, 10, 2.0);
-
-*/
- delay(2000);
- return;
+    return;
 }
 
-void testAuton(){
-
-  return;
-}

@@ -16,6 +16,7 @@
 #include "gyro.h"
 #include "utilities.h"
 
+Ultrasonic leftSonar;
 Encoder BLEncoder;
 Encoder BREncoder;
 
@@ -67,6 +68,8 @@ void initialize() {
      */
     BLEncoder = encoderInit(QUAD_TOP_PORT_LEFT, QUAD_BOTTOM_PORT_LEFT, false);
     BREncoder = encoderInit(QUAD_TOP_PORT_RIGHT, QUAD_BOTTOM_PORT_RIGHT, false);
+
+    leftSonar = ultrasonicInit(ULTRASONIC_LEFT_ECHO, ULTRASONIC_LEFT_PING);
 
     /* Go a little below the dark value
      * TODO Have a separate callibration portion to get the value for lines.

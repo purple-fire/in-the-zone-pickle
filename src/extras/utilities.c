@@ -2,13 +2,13 @@
  * @file utilities.c
  * @author Zach Peltzer
  * @date Created: Thu, 19 Apr 2018
- * @date Last Modified: Thu, 19 Apr 2018
+ * @date Last Modified: Sat, 21 Apr 2018
  */
 
 #include "utilities.h"
 #include "liftControl.h"
 
-int teamColor = RED_TEAM;
+int teamColor = BLUE_TEAM;
 
 void ledSendConeCount(int count) {
     if (count > STACK_CONES_MAX) {

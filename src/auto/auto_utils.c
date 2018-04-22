@@ -32,7 +32,7 @@ void baseControl(float target, float power, float integralRange, float timeOut)
 
     timeOut = timeOut*1000;
 
-    while ((T1 > (millis() - 350))&&(T2 > (millis() - timeOut))) {
+    while ((T1 > (millis() - 200))&&(T2 > (millis() - timeOut))) {
 
         rightEncoderValue = encoderGet(BREncoder);
         leftEncoderValue = encoderGet(BLEncoder);
@@ -44,9 +44,6 @@ void baseControl(float target, float power, float integralRange, float timeOut)
 
         leftError = target - leftEncoderValue;
         leftPower =  motorPowerLimit(pidNextIteration(&leftData, leftError));
-
-
-
 
         rightMotorsSet(capMotorPower(rightPower,maxPower));
         leftMotorsSet(capMotorPower(leftPower,maxPower));
@@ -63,8 +60,8 @@ void baseControl(float target, float power, float integralRange, float timeOut)
 
 void baseTurn(float target, bool leftToggle, bool rightToggle, float timeOut)
 {
-    const float kp = 1.5;
-    const float ki = 0.007;
+    const float kp = 2.30;
+    const float ki = 0.075;
     const float kd = 1.0;
 
     /* const float kp = 0.5; */
@@ -88,9 +85,8 @@ void baseTurn(float target, bool leftToggle, bool rightToggle, float timeOut)
 
     timeOut = timeOut*1000;
 
-    while ((T1 > (millis() - 350))&&(T2 > (millis() - timeOut))) {
+    while ((T1 > (millis() - 200))&&(T2 > (millis() - timeOut))) {
         gyroValue = devgyroGet(&gyroDev);
-        printf("Gyro: %d\n", gyroValue);
         turnError = target - gyroValue;
         turnPower = motorPowerLimit(pidNextIteration(&data, turnError));
 
@@ -175,3 +171,23 @@ void wallBump(int threshold, float power, float timeOut, int angle)
 
     delay(100);
 }
+
+void loaderAlign(int power, int timeout) {
+    long startTime = millis();
+
+    int dist = ULTRA_BAD_RESPONSE;
+    while (dist == ULTRA_BAD_RESPONSE || dist > LOADER_DISTANCE + 8) {
+        rightMotorsSet(power);
+        leftMotorsSet(power);
+
+        if (millis() - startTime > timeout) {
+            break;
+        }
+
+        delay(20);
+        dist = ultrasonicGet(leftSonar);
+    }
+
+    chassisStop();
+}
+

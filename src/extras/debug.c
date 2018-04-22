@@ -10,7 +10,7 @@
 #include "motor.h"
 #include "liftControl.h"
 
-#define DB_TABLE_ROWS 7
+#define DB_TABLE_ROWS 8
 #define DB_TABLE_COLS 3
 #define DB_TABLE_COL_WIDTH 32
 #define DB_TABLE_VALUE_WIDTH 8
@@ -29,8 +29,9 @@ static const char *debugTable[DB_TABLE_ROWS][DB_TABLE_COLS] = {
     { "rightPower",     "mogoTarget",   "mogoPositoin" },
     { "leftError",      "coneTarget",   "conePosition" },
     { "leftPower",      NULL,           "gyro" },
-    { "turnError",      "StackConeCount",NULL},
-    { "turnPower",      "grabState",    NULL },
+    { "turnError",      "StackConeCount","leftEncoder" },
+    { "turnPower",      "grabState",    "rightEncoder" },
+    { NULL,             NULL,           "leftSonar" },
 };
 
 static void debugPrintTable(void) {
@@ -83,6 +84,9 @@ void debugMonitor(void *parameter) {
         dbTableValuePrintf(2, 2, "%8d", mogoPosition);
         dbTableValuePrintf(3, 2, "%8d", conePosition);
         dbTableValuePrintf(4, 2, "%8d", devgyroGet(&gyroDev));
+        dbTableValuePrintf(5, 2, "%8d", encoderGet(BLEncoder));
+        dbTableValuePrintf(6, 2, "%8d", encoderGet(BREncoder));
+        dbTableValuePrintf(7, 2, "%8d", ultrasonicGet(leftSonar));
 
         fflush(stdout);
 

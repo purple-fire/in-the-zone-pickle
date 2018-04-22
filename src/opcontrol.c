@@ -112,6 +112,7 @@ void operatorControl() {
     mogoToggle = 1;
     setConeAngle(analogRead(CONE_POT_PORT));
 
+    changeStackingMode(0);
     int toggleCone = 0;//,toggleLift,toggleMogo;
 
     bool coneArmUpPressed = false,

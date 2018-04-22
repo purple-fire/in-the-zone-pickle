@@ -34,10 +34,13 @@ extern "C" {
 /* Sensors */
 #define GYRO_PORT 8
 
-#define QUAD_TOP_PORT_LEFT 1
-#define QUAD_BOTTOM_PORT_LEFT  2
+#define ULTRASONIC_LEFT_PING 7
+#define ULTRASONIC_LEFT_ECHO 8
+
 #define QUAD_TOP_PORT_RIGHT 3
 #define QUAD_BOTTOM_PORT_RIGHT  4
+#define QUAD_TOP_PORT_LEFT 5
+#define QUAD_BOTTOM_PORT_LEFT  6
 
 #define MOGO_POT_PORT 2
 #define LIFT_POT_PORT 3
@@ -47,7 +50,6 @@ extern "C" {
 #define MOGO_DOWN_BUTTON joystickGetDigital(1, 6, JOY_DOWN)
 #define MOGO_DROP_LOW_BUTTON joystickGetDigital(1, 5, JOY_UP)
 #define MOGO_DROP_HIGH_BUTTON joystickGetDigital(1, 5, JOY_DOWN)
-
 
 #define CONE_ARM_DOWN_BUTTON joystickGetDigital(2, 5, JOY_DOWN)
 #define CONE_ARM_UP_BUTTON joystickGetDigital(2, 6, JOY_DOWN)
@@ -67,7 +69,8 @@ extern "C" {
 #define CONE_DEC_BUTTON joystickGetDigital(2, 7, JOY_LEFT)
 #define CONE_INC_BUTTON joystickGetDigital(2, 7, JOY_RIGHT)
 
-extern Ultrasonic sonar;
+extern Ultrasonic leftSonar;
+
 extern Encoder BLEncoder;
 extern Encoder BREncoder;
 

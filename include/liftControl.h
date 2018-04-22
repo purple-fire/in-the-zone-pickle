@@ -9,17 +9,18 @@
 #define MOGO_HALF 2000
 #define MOGO_DROP_HIGH 2000
 #define MOGO_DROP_LOW 1290
-#define MOGO_UP 2760
+#define MOGO_UP 2690
 #define MOGO_THRESH 10
 
 #define LIFT_DOWN 40
+#define LIFT_MID 250
 #define LIFT_LOADER 550
 #define LIFT_STATIONARY 900
 #define LIFT_THRESH 50
 
 #define CONE_START 1060
 #define CONE_DOWN 3110
-#define CONE_HALF 2200
+#define CONE_HALF 2500
 #define CONE_LOADER 1850
 #define CONE_UP 1160
 #define CONE_UP_OFFSET 1800
@@ -98,10 +99,17 @@ bool stackConeStationary();
 bool stackConeLoader();
 bool pickupCone(int mode);
 bool pickupConeLoader(int mode);
+void dropCone();
 bool grabStack(int mode);
 bool ungrabStack();
+
+/**
+ * Raise the lift to allow moving the mogo lift
+ */
+void liftClearMogo();
 
 /* Blocking versions of lift setters */
 bool setLiftHeightBlock(int angle, int timeout);
 bool setMogoAngleBlock(int angle, int timeout);
 bool setConeAngleBlock(int angle, int timeout);
+

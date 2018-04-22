@@ -102,7 +102,7 @@ void chassisStopSmooth(void) {
             || !motorSetSmooth(rightMotorR, 0)
             || !motorSetSmooth(leftMotorF, 0)
             || !motorSetSmooth(leftMotorR, 0)) {
-        /* Just loop until all succede */
+        /* Just loop until all succeed */
         delay(20);
     }
 }

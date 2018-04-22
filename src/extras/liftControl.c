@@ -76,7 +76,7 @@ void liftControl(void *parameter)
     pidDataInit(&coneLift, .1, 0, 0, 125, 4095, 150);
 
     PIDData lift;
-    pidDataInit(&lift, 1.0, 0.005, 1.0, 125, 4095, 200);
+    pidDataInit(&lift, 0.8, 0.005, 1.0, 125, 4095, 200);
 
     while (true)
     {
@@ -136,9 +136,6 @@ void liftControl(void *parameter)
     }
 }
 
-
-
-
 bool stackCone() {
     if (stackConeCount >= STACK_CONES_MAX || grabState == GRABBED_STACK) {
         return false;
@@ -148,14 +145,15 @@ bool stackCone() {
     int liftPosPost = stackConePositions[stackConeCount].liftPosPost;
     int conePos     = stackConePositions[stackConeCount].conePos;
 
-    if (!setLiftHeightBlock(liftPosPre, 2000))  { return false; }
-    if (!setConeAngleBlock(conePos, 1000))      { return false; }
-    if (!setLiftHeightBlock(liftPosPost, 2000)) { return false; }
+    if (!setLiftHeightBlock(liftPosPre, 2000))  { /* return false; */ }
+    if (!setConeAngleBlock(conePos, 1000))      { /* return false; */ }
+    if (!setLiftHeightBlock(liftPosPost, 2000)) { /* return false; */ }
 
     grabState = GRABBED_STACK;
     incStackCones();
     return true;
 }
+
 bool stackConeLoader(){
   if (stackConeCount >= STACK_CONES_MAX || grabState == GRABBED_STACK) {
       return false;
@@ -166,12 +164,12 @@ bool stackConeLoader(){
   int conePos     = stackConePositions[stackConeCount].conePos;
 
   if (stackConeCount < 4){
-    if (!setLiftHeightBlock(LIFT_LOADER, 500))  { return false; }
+      if (!setLiftHeightBlock(LIFT_LOADER, 500))  { return false; }
   }
   else{
-  if (!setLiftHeightBlock(liftPosPre, 2000))  { return false; }
+      if (!setLiftHeightBlock(liftPosPre, 2000))  { return false; }
+  }
 
-}
   if (!setConeAngleBlock(conePos, 1000))      { return false; }
   if (!setLiftHeightBlock(liftPosPost, 2000)) { return false; }
   grabState = GRABBED_STACK;
@@ -224,6 +222,17 @@ bool grabStack(int mode) {
     return true;
 }
 
+void dropCone() {
+    motorSet(liftMotor, 60);
+    motorSet(liftMotorAux, 60);
+    delay(100);
+    motorSet(goliathMotor, GOLIATH_OUT);
+    delay(200);
+    motorStop(goliathMotor);
+    motorStop(liftMotor);
+    motorStop(liftMotorAux);
+}
+
 bool ungrabStack() {
     if (grabState != GRABBED_STACK) {
         return false;
@@ -234,20 +243,27 @@ bool ungrabStack() {
      * outtake to realse the cone.
      */
     if (stackConeCount > 3) {
-        /* Move up to liftPosPre of the previous cone */
-        if (!setLiftHeightBlock(
-                    stackConePositions[stackConeCount - 1].liftPosPre,
-                    1000)) {
-            motorStop(goliathMotor);
-            return false;
+        /* Pulse the lifit up to clear the cone */
+        int toggleSave = liftToggle;
+        liftToggle = 0;
+
+        motorSet(liftMotor, -127);
+        motorSet(liftMotorAux, -127);
+        if (liftPosition < 800) {
+            delay(250);
+        } else {
+            delay(400);
         }
+        motorStop(liftMotor);
+        motorStop(liftMotorAux);
+
+        liftToggle = toggleSave;
     } else {
         /* Give the goliath some time to outtake if the lift is not moved */
         delay(200);
     }
 
     motorStop(goliathMotor);
-    setConeAngleBlock(CONE_HALF, 1000);
 
     grabState = GRABBED_NONE;
     return true;
@@ -307,18 +323,21 @@ void resetStationaryCones(){
 }
 
 bool pickupCone(int mode) {
-
     if (mode == 0) { //Autonomous
         motorSet(goliathMotor,GOLIATH_IN);
         setConeAngle(CONE_DOWN); /* Let setLiftHeightBlock() give enough time */
-
         setLiftHeightBlock(LIFT_DOWN, 2000);
-
-        delay(1000);
-
-        setConeAngleBlock(CONE_HALF, 1000);
+        liftToggle = 0;
+        motorSet(liftMotor, 80);
+        motorSet(liftMotorAux, 80);
+        delay(800);
+        motorStop(liftMotor);
+        motorStop(liftMotorAux);
         motorStop(goliathMotor);
     } else {   //For use in teleop
+        int toggleSave = liftToggle;
+        liftToggle = 1;
+
         /* Let the operator decide when to stop these */
         setLiftHeight(LIFT_DOWN);
         setConeAngle(CONE_DOWN);
@@ -333,6 +352,7 @@ bool pickupCone(int mode) {
 
         motorStop(goliathMotor);
         setConeAngleBlock(CONE_HALF, 100); /* Don't do anything if this fails */
+        liftToggle = toggleSave;
     }
 
     grabState = GRABBED_CONE;
@@ -340,19 +360,29 @@ bool pickupCone(int mode) {
 }
 
 bool pickupConeLoader(int mode) {
-
     if (mode == 0) { //Autonomous
-        setConeAngle(CONE_DOWN); /* Let setLiftHeightBlock() give enough time */
-
-        setLiftHeightBlock(LIFT_STATIONARY, 200);
         motorSet(goliathMotor,GOLIATH_IN);
-        setConeAngleBlock(CONE_HALF, 100);
+        if (liftPosition < LIFT_LOADER) {
+            setLiftHeightBlock(LIFT_LOADER, 500);
+            setConeAngleBlock(CONE_DOWN, 500);
+        } else {
+            setConeAngleBlock(CONE_DOWN, 500);
+            setLiftHeightBlock(LIFT_LOADER, 500);
+        }
+        delay(500);
         motorStop(goliathMotor);
     } else {   //For use in teleop
-        /* Let the operator decide when to stop these */
-        setLiftHeight(LIFT_DOWN);
+        int toggleSave = liftToggle;
+        liftToggle = 1;
 
-        setConeAngle(CONE_LOADER);
+        /* Let the operator decide when to stop this */
+        if (liftPosition < LIFT_LOADER) {
+            setLiftHeightBlock(LIFT_LOADER, 1000);
+        } else {
+            setLiftHeight(LIFT_LOADER);
+        }
+
+        setConeAngle(CONE_DOWN);
 
         /* TODO
          * Don't have a while loop inside an action in teleop (since this blocks
@@ -363,16 +393,35 @@ bool pickupConeLoader(int mode) {
         }
 
         motorStop(goliathMotor);
-        /* Don't do anything if this times out */
-        setConeAngleBlock(CONE_HALF, 100);
+        liftToggle = toggleSave;
     }
 
     grabState = GRABBED_CONE;
     return true;
 }
 
+void liftClearMogo() {
+    int toggleSave = liftToggle;
+    liftToggle = 0;
+
+    if (liftPosition < LIFT_MID) {
+        if (liftTarget < LIFT_MID) {
+            liftTarget = LIFT_MID;
+        }
+
+        motorSet(liftMotor, -127);
+        motorSet(liftMotorAux, -127);
+        delay(150);
+        motorStop(liftMotor);
+        motorStop(liftMotorAux);
+    }
+
+    liftToggle = toggleSave;
+}
+
 void setMogoAngle(int liftAngle)
 {
+    liftClearMogo();
     mogoTarget = liftAngle;
 }
 
@@ -392,6 +441,9 @@ void setLiftHeight(int liftAngle)
 }
 
 bool setLiftHeightBlock(int angle, int timeout) {
+    int toggleSave = liftToggle;
+    liftToggle = 1;
+
     int start = millis();
     if (timeout < 0) {
         timeout = INT_MAX;
@@ -402,10 +454,12 @@ bool setLiftHeightBlock(int angle, int timeout) {
         delay(20);
 
         if (millis() - start > timeout) {
+            liftToggle = toggleSave;
             return false;
         }
     }
 
+    liftToggle = toggleSave;
     return true;
 }
 
