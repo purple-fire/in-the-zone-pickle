@@ -191,3 +191,53 @@ void loaderAlign(int power, int timeout) {
     chassisStop();
 }
 
+void driveUntilSonar(int target, int power, float integralRange, int timeOut){
+  PIDData rightData;
+  PIDData leftData;
+
+
+  float kp = 1.3;
+  float ki = 0.05;
+  float kd = 0.0;
+  float maxPower = power;
+
+  pidDataInit(&leftData, kp, ki, kd, maxPower, 32767, integralRange);
+  pidDataInit(&rightData, kp, ki, kd, maxPower, 32767, integralRange);
+
+
+  long startTime = millis();
+  int leftDist = ultrasonicGet(leftSonar);
+  int rightDist = ultrasonicGet(rightSonar);
+
+
+  long T1, T2;
+  T1 = millis();
+  T2 = millis();
+
+  timeOut = timeOut*1000;
+
+  while ((T1 > (millis() - 200))&&(T2 > (millis() - timeOut))) {
+
+      leftDist = ultrasonicGet(leftSonar);
+      rightDist = ultrasonicGet(rightSonar);
+
+      if (leftDist != ULTRA_BAD_RESPONSE) {
+        leftError = leftDist - target;
+        leftPower =  motorPowerLimit(pidNextIteration(&leftData, leftError));
+        leftMotorsSet(capMotorPower(leftPower,maxPower));
+      }
+
+      if (rightDist != ULTRA_BAD_RESPONSE) {
+        rightError = rightDist - target;
+        rightPower =  motorPowerLimit(pidNextIteration(&rightData, rightError));
+        rightMotorsSet(capMotorPower(rightPower,maxPower));
+      }
+
+      if((ABS(leftError)>60)||(ABS(rightError)>60)){
+          T1 = millis();
+      }
+
+
+}
+    chassisStop ();
+}

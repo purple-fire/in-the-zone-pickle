@@ -17,6 +17,7 @@
 #include "utilities.h"
 
 Ultrasonic leftSonar;
+Ultrasonic rightSonar;
 Encoder BLEncoder;
 Encoder BREncoder;
 
@@ -70,7 +71,7 @@ void initialize() {
     BREncoder = encoderInit(QUAD_TOP_PORT_RIGHT, QUAD_BOTTOM_PORT_RIGHT, false);
 
     leftSonar = ultrasonicInit(ULTRASONIC_LEFT_ECHO, ULTRASONIC_LEFT_PING);
-
+    rightSonar = ultrasonicInit(ULTRASONIC_RIGHT_ECHO, ULTRASONIC_RIGHT_PING);
     /* Go a little below the dark value
      * TODO Have a separate callibration portion to get the value for lines.
      */

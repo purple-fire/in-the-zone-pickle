@@ -24,6 +24,8 @@ DriveMode driveMode;
 int liftMode = 0;
 int steps;
 int stackingMode = 0;
+int leftDist;
+int rightDist;
 /**
  * Driver control with tank-style controls.
  */
@@ -32,7 +34,11 @@ static void driverControl(void *parameter) {
     chassisStop();
 
     while (true) {
-
+      leftDist = ultrasonicGet(leftSonar);
+      rightDist = ultrasonicGet(rightSonar);
+      printf("Left Sonic:  %d \n ", leftDist);
+      printf("Right Sonic: %d \n ", rightDist);
+      printf("\n \n \n \n \n \n \n \n \n \n \n \n");
         if (driveMode == DRIVE_TANK) {
             int joyRight = joystickGetAnalog(1, CRY);
             int joyLeft = joystickGetAnalog(1, CLY);
@@ -112,7 +118,6 @@ void operatorControl() {
     mogoToggle = 1;
     setConeAngle(analogRead(CONE_POT_PORT));
 
-    changeStackingMode(0);
     int toggleCone = 0;//,toggleLift,toggleMogo;
 
     bool coneArmUpPressed = false,
@@ -317,10 +322,24 @@ void operatorControl() {
                          /* TODO What to do in this case? */
                          break;
                      }
+
                break;
 
                case 2: //Transfer from the stack to the stationary goal
+               switch (grabState) {
+               case GRABBED_STACK:
+               case GRABBED_CONE:
+                   /* Need to move the intake to clear the stack first */
+                   stackConeStationary();
+                   break;
 
+               case GRABBED_NONE:
+
+                   break;
+               case GRABBED_STATIONARY:
+                   /* TODO What to do in this case? */
+                   break;
+               }
                break;
 
                case 3:  //Transfer from the stack to another mogo
@@ -350,7 +369,7 @@ void operatorControl() {
                       break;
 
                       case 2:
-
+                      grabStack(0);
                       break;
 
                       case 3:

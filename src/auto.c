@@ -16,14 +16,14 @@
 
 void autonomous ()
 {
-  int autoChoice = 1;
+  int autoChoice = 2;
 
   switch(autoChoice) {
    case 1:
       autonOne();
       break;
    case 2:
-  //    testAuton();
+     autoTest();
       break;
    default :
       return;

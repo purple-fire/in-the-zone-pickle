@@ -32,6 +32,7 @@ void baseTurn(float target, bool leftToggle, bool rightToggle, float timeOut);
 void driveTime(float powerL, float powerR, bool coast, float timeOut);
 void wallBump(int threshold, float power, float timeOut, int angle);
 void loaderAlign(int power, int timeout);
+void driveUntilSonar(int target, int power, float integralRange, int timeOut);
 void autonOne();
 void autoTest();
 

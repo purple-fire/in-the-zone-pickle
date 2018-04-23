@@ -183,15 +183,26 @@ bool stackConeStationary() {
         return false;
     }
 
-    int liftPos = stationaryConePositions[stationaryConeCount].liftPos;
+
+    int liftPosStat = stationaryConePositions[stationaryConeCount].liftPos;
     int conePos = stationaryConePositions[stationaryConeCount].conePos;
 
-    if (!setConeAngleBlock(CONE_UP, 1000))   { return false; }
-    if (!setLiftHeightBlock(liftPos, 2000))  { return false; }
-    if (!setConeAngleBlock(conePos, 1000))   { return false; }
-
+    liftToggle = 0;
+    motorSet(liftMotor,-127);
+    motorSet(liftMotorAux,-127);
+    motorSet(goliathMotor, GOLIATH_IN - 40);
+    delay(300);
+    motorSet(liftMotor,0);
+    motorSet(liftMotor,0);
+    motorSet(goliathMotor,0);
+    liftToggle = 1;
+    setConeAngle(conePos);
+    if (!setLiftHeightBlock(liftPosStat, 2000))  { return false; }
+    motorSet(goliathMotor, GOLIATH_OUT);
+    delay(400);
     incStationaryCones();
     decStackCones();
+    motorSet(goliathMotor,0);
     return true;
 }
 

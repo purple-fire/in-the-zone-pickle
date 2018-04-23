@@ -14,12 +14,14 @@
 #include "liftControl.h"
 
 void autoTest() {
+
+  /**
     devgyroResetTo(&gyroDev, 0);
 
     //Begin!
 
     resetStackCones();
-    grabState = GRABBED_STACK; /* Pre-load cone */
+    grabState = GRABBED_STACK;
     liftToggle = 0;
     coneToggle = 1;
     mogoToggle = 1;
@@ -31,6 +33,17 @@ void autoTest() {
     baseTurn(-135, true, true, 4.0);
 
     delay(3000);
+*/
+devgyroResetTo(&gyroDev, 135);
+
+baseTurn(225, true, true, 2.5);
+delay(500);
+driveUntilSonar(44, 80, 10, 2.0);
+delay(500);
+baseTurn(360-100, true, true, 2.5);
+setMogoAngleBlock(MOGO_DOWN, 500);
+baseControl(42, 80, 10, 2.0);
+
     return;
 }
 

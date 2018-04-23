@@ -75,28 +75,40 @@ void autonOne(){
     devgyroResetTo(&gyroDev, 135);
 
     //Line up with the second Mogo
-    delay (500);
+    delay (400);
 
-    baseTurn(360-110, true, true, 2.0);
+    baseTurn(360-112, true, true, 2.1);
     setMogoAngleBlock(MOGO_DOWN, 500);
-    baseControl(56, 80, 10, 2.0);
-
+    baseControl(42, 80, 10, 2.0);
+    baseTurn(360-110,true,true,1.5);
+    baseControl(17,80,10,1.0);
     setMogoAngleBlock(MOGO_UP, 1000);
-    baseControl(-10, 80, 10, 2.0);
-    baseTurn(180, false, true, 2.0);
-    loaderAlign(40, 3000);
+    baseControl(-12, 80, 10, 2.0);
+    baseTurn(180, true, true, 2.0);
 
-    while (millis() - startTime < 40000) {
+    loaderAlign(40, 2000);
+
+    baseTurn(180,true,true,.5);
+
+    bool finishedACone = false;
+
+    while (millis() - startTime < 38000) {
+
         pickupConeLoader(0);
         stackConeLoader();
+        if (millis() - startTime > 38000){
+          break;
+        }
         ungrabStack();
+
         delay(500);
     }
 
-    baseTurn(90, true, true, 1.5);
-    setMogoAngleBlock(MOGO_DOWN, 2000);
+
+    baseTurn(90, true, true, 1.0);
+    setMogoAngle(MOGO_DOWN);
+    baseControl(7,80,10,1.0);
     baseControl(-24, 80, 10, 1.5);
 
     return;
 }
-
