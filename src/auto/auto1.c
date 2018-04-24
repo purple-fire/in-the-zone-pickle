@@ -31,7 +31,7 @@ void auto1(){
     dropCone();
 
     //Score another cone
-    baseTurn(0, true, true, 1.5);
+    baseTurn(0, 1, 1, 1.5);
     baseControl(7, 80, 10, 1.0);
     pickupCone(0);
     stackCone();
@@ -39,12 +39,19 @@ void auto1(){
     //Back up.
 
     //Score yet another cone
-    baseTurn(0, true, true, 1.5);
-    baseControl(11, 80, 10, 1.0);
+    baseTurn(0, 1, 1, 1.5);
+    baseControl(10, 80, 10, 1.0);
     dropCone();
     pickupCone(0);
     stackCone();
     dropCone();
+    //Pick up the fourth cone
+    setConeAngleBlock(CONE_HALF,500);
+    baseControl(11, 80, 10, 1.0);
+    pickupCone(0);
+    stackCone();
+    dropCone();
+
 
     /*
     //Score yet another yet another cone
@@ -55,13 +62,14 @@ void auto1(){
     dropCone();
     */
 
-    baseControl(-42, 80, 10, 2.0);
-    baseTurn(45, true, false, 1.0);
+    baseControl(-53, 80, 10, 2.0);
+
+    baseTurn(45, 1.0, 0.2, 1.0);
 
     //Line Up With 20Pt
 
-    baseControl(-16, 80, 10, 1.5);
-    baseTurn(135, true, true, 1.5);
+    baseControl(-19, 80, 10, 1.5);
+    baseTurn(135, 1, 1, 1.5);
 
     //Previous Value: 1.0, 0.3. Not far enough forward.
 
@@ -77,18 +85,20 @@ void auto1(){
     //Line up with the second Mogo
     delay (400);
 
-    baseTurn(360-112, true, true, 2.1);
+    baseTurn(360-112, 1, 1, 2.1);
     setMogoAngleBlock(MOGO_DOWN, 500);
-    baseControl(42, 80, 10, 2.0);
-    baseTurn(360-110,true,true,1.5);
-    baseControl(17,80,10,1.0);
+    baseControl(39, 80, 10, 2.0);
+    baseTurn(360-109,1,1,1.5);
+    baseControl(21,80,10,1.0);
     setMogoAngleBlock(MOGO_UP, 1000);
+    baseTurn(360-100,1.0,1.0,1000);
+    /*
     baseControl(-12, 80, 10, 2.0);
-    baseTurn(180, true, true, 2.0);
+    baseTurn(180, 1, 1, 2.0);
 
     loaderAlign(40, 2000);
 
-    baseTurn(180,true,true,.5);
+    baseTurn(180,1,1,.5);
 
     bool finishedACone = false;
 
@@ -104,10 +114,13 @@ void auto1(){
         delay(500);
     }
 
+*/
+    baseControl(-47, 80, 10, 2.0);
+    baseTurn(135, 1, 1, 1.5);
+    barBump(60,3.0);
 
-    baseTurn(90, true, true, 1.0);
-    setMogoAngle(MOGO_DOWN);
-    baseControl(7,80,10,1.0);
+    setMogoAngleBlock(MOGO_DROP_LOW,750);
+
     baseControl(-24, 80, 10, 1.5);
 
     return;
