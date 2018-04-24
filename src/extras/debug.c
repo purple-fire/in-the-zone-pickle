@@ -10,7 +10,7 @@
 #include "motor.h"
 #include "liftControl.h"
 
-#define DB_TABLE_ROWS 8
+#define DB_TABLE_ROWS 9
 #define DB_TABLE_COLS 3
 #define DB_TABLE_COL_WIDTH 32
 #define DB_TABLE_VALUE_WIDTH 8
@@ -32,6 +32,7 @@ static const char *debugTable[DB_TABLE_ROWS][DB_TABLE_COLS] = {
     { "turnError",      "StackConeCount","leftEncoder" },
     { "turnPower",      "grabState",    "rightEncoder" },
     { NULL,             NULL,           "leftSonar" },
+    { NULL,             "autoSelect",   "rightSonar" },
 };
 
 static void debugPrintTable(void) {
@@ -79,6 +80,7 @@ void debugMonitor(void *parameter) {
         dbTableValuePrintf(3, 1, "%8d", coneTarget);
         dbTableValuePrintf(5, 1, "%8d", stackConeCount);
         dbTableValuePrintf(6, 1, "%8d", grabState);
+        dbTableValuePrintf(8, 1, "%8d", analogRead(AUTO_SELECTOR_POT_PORT));
 
         dbTableValuePrintf(1, 2, "%8d", liftPosition);
         dbTableValuePrintf(2, 2, "%8d", mogoPosition);
@@ -87,6 +89,7 @@ void debugMonitor(void *parameter) {
         dbTableValuePrintf(5, 2, "%8d", encoderGet(BLEncoder));
         dbTableValuePrintf(6, 2, "%8d", encoderGet(BREncoder));
         dbTableValuePrintf(7, 2, "%8d", ultrasonicGet(leftSonar));
+        dbTableValuePrintf(8, 2, "%8d", ultrasonicGet(rightSonar));
 
         fflush(stdout);
 

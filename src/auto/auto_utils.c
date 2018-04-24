@@ -58,10 +58,10 @@ void baseControl(float target, float power, float integralRange, float timeOut)
     chassisStop();
 }
 
-void baseTurn(float target, bool leftToggle, bool rightToggle, float timeOut)
+void baseTurn(float target, float leftScale, float rightScale, float timeOut)
 {
-    const float kp = 2.30;
-    const float ki = 0.075;
+    const float kp = 2.05;
+    const float ki = 0.08;
     const float kd = 1.0;
 
     /* const float kp = 0.5; */
@@ -92,17 +92,8 @@ void baseTurn(float target, bool leftToggle, bool rightToggle, float timeOut)
 
         // TODO Should we check that each side moves the same amount and adjust
         // them afterwards if not?
-        if(rightToggle){
-            rightMotorsSet(turnPower);
-        } else {
-            rightMotorsSet(0);
-        }
-
-        if(leftToggle){
-            leftMotorsSet(-turnPower);
-        } else {
-            leftMotorsSet(0);
-        }
+        rightMotorsSet(turnPower * rightScale);
+        leftMotorsSet(-turnPower * leftScale);
 
         if(ABS(turnError)>3){
             T1 = millis();
@@ -172,7 +163,7 @@ void wallBump(int threshold, float power, float timeOut, int angle)
     delay(100);
 }
 
-void loaderAlign(int power, int timeout) {
+void loaderAlign(int power, float timeout) {
     long startTime = millis();
 
     int dist = ULTRA_BAD_RESPONSE;
@@ -191,53 +182,162 @@ void loaderAlign(int power, int timeout) {
     chassisStop();
 }
 
-void driveUntilSonar(int target, int power, float integralRange, int timeOut){
-  PIDData rightData;
-  PIDData leftData;
+void barBump(int power, float timeout) {
+    long T1, T2;
+    T1 = T2 = millis();
 
+    encoderReset(BLEncoder);
+    encoderReset(BREncoder);
 
-  float kp = 1.3;
-  float ki = 0.05;
-  float kd = 0.0;
-  float maxPower = power;
+    int lastLeft  = encoderGet(BLEncoder);
+    int lastRight = encoderGet(BREncoder);
 
-  pidDataInit(&leftData, kp, ki, kd, maxPower, 32767, integralRange);
-  pidDataInit(&rightData, kp, ki, kd, maxPower, 32767, integralRange);
+    timeout *= 1000;
+    while (millis() - T1 < 200 && millis() - T2 < timeout) {
 
+        leftMotorsSet(power);
+        rightMotorsSet(power);
 
-  long startTime = millis();
-  int leftDist = ultrasonicGet(leftSonar);
-  int rightDist = ultrasonicGet(rightSonar);
+        leftEncoderValue =  encoderGet(BLEncoder);
+        rightEncoderValue = encoderGet(BREncoder);
 
+        if (ABS(leftEncoderValue - lastLeft) > 2
+                || ABS(rightEncoderValue - lastRight) > 2) {
+            T1 = millis();
+        }
 
-  long T1, T2;
-  T1 = millis();
-  T2 = millis();
+        lastLeft = leftEncoderValue;
+        lastRight = rightEncoderValue;
 
-  timeOut = timeOut*1000;
+        delay(20);
+    }
 
-  while ((T1 > (millis() - 200))&&(T2 > (millis() - timeOut))) {
-
-      leftDist = ultrasonicGet(leftSonar);
-      rightDist = ultrasonicGet(rightSonar);
-
-      if (leftDist != ULTRA_BAD_RESPONSE) {
-        leftError = leftDist - target;
-        leftPower =  motorPowerLimit(pidNextIteration(&leftData, leftError));
-        leftMotorsSet(capMotorPower(leftPower,maxPower));
-      }
-
-      if (rightDist != ULTRA_BAD_RESPONSE) {
-        rightError = rightDist - target;
-        rightPower =  motorPowerLimit(pidNextIteration(&rightData, rightError));
-        rightMotorsSet(capMotorPower(rightPower,maxPower));
-      }
-
-      if((ABS(leftError)>60)||(ABS(rightError)>60)){
-          T1 = millis();
-      }
-
-
+    chassisStop();
 }
+
+void driveSonar(
+        int leftTarget, int rightTarget, int power, float integralRange, float timeOut){
+    PIDData rightData;
+    PIDData leftData;
+
+    float kp = 1.0;
+    float ki = 0.000;
+    float kd = 0.0;
+    float maxPower = power;
+
+    pidDataInit(&leftData, kp, ki, kd, maxPower, 32767, integralRange);
+    pidDataInit(&rightData, kp, ki, kd, maxPower, 32767, integralRange);
+
+    int leftDist;
+    int rightDist;
+
+    long T1, T2;
+    T1 = millis();
+    T2 = millis();
+
+    timeOut = timeOut*1000;
+
+    while ((T1 > (millis() - 200))&&(T2 > (millis() - timeOut))) {
+
+        leftDist = ultrasonicGet(leftSonar);
+        rightDist = ultrasonicGet(rightSonar);
+
+        if (leftDist != ULTRA_BAD_RESPONSE && leftTarget != ULTRA_BAD_RESPONSE) {
+            leftError = leftDist - leftTarget;
+            leftPower = capMotorPower(
+                    pidNextIteration(&leftData, leftError), maxPower);
+            leftMotorsSet(leftPower);
+        }
+
+        if (rightDist != ULTRA_BAD_RESPONSE && rightTarget != ULTRA_BAD_RESPONSE) {
+            rightError = rightDist - rightTarget;
+            rightPower = capMotorPower(
+                    pidNextIteration(&rightData, rightError), maxPower);
+            rightMotorsSet(rightPower);
+        }
+
+        if((ABS(leftError)>2)||(ABS(rightError)>2)){
+            T1 = millis();
+        }
+    }
     chassisStop ();
 }
+
+void driveSonarLeft(
+        int leftTarget, int power, float integralRange, float timeOut){
+    PIDData leftData;
+
+    float kp = 0.7;
+    float ki = 0.005;
+    float kd = 0.0;
+    float maxPower = power;
+
+    pidDataInit(&leftData, kp, ki, kd, maxPower, 32767, integralRange);
+
+    int leftDist;
+
+    long T1, T2;
+    T1 = millis();
+    T2 = millis();
+
+    timeOut = timeOut*1000;
+
+    while ((T1 > (millis() - 200))&&(T2 > (millis() - timeOut))) {
+
+        leftDist = ultrasonicGet(leftSonar);
+
+        if (leftDist != ULTRA_BAD_RESPONSE) {
+            leftError = leftDist - leftTarget;
+            leftPower = capMotorPower(
+                    pidNextIteration(&leftData, leftError), maxPower);
+            leftMotorsSet(leftPower);
+        }
+
+        rightMotorsSet(leftPower);
+
+        if(ABS(leftError)>2){
+            T1 = millis();
+        }
+    }
+    chassisStop ();
+}
+
+void driveSonarRight(
+        int rightTarget, int power, float integralRange, float timeOut){
+    PIDData rightData;
+
+    float kp = 0.7;
+    float ki = 0.005;
+    float kd = 0.0;
+    float maxPower = power;
+
+    pidDataInit(&rightData, kp, ki, kd, maxPower, 32767, integralRange);
+
+    int rightDist;
+
+    long T1, T2;
+    T1 = millis();
+    T2 = millis();
+
+    timeOut = timeOut*1000;
+
+    while ((T1 > (millis() - 200))&&(T2 > (millis() - timeOut))) {
+
+        rightDist = ultrasonicGet(rightSonar);
+
+        if (rightDist != ULTRA_BAD_RESPONSE) {
+            rightError = rightDist - rightTarget;
+            rightPower = capMotorPower(
+                    pidNextIteration(&rightData, rightError), maxPower);
+            rightMotorsSet(rightPower);
+        }
+
+        leftMotorsSet(rightPower);
+
+        if(ABS(rightError)>2){
+            T1 = millis();
+        }
+    }
+    chassisStop ();
+}
+

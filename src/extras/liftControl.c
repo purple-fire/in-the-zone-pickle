@@ -76,7 +76,7 @@ void liftControl(void *parameter)
     pidDataInit(&coneLift, .1, 0, 0, 125, 4095, 150);
 
     PIDData lift;
-    pidDataInit(&lift, 0.8, 0.005, 1.0, 125, 4095, 200);
+    pidDataInit(&lift, 0.7, 0.000, 2.0, 125, 4095, 200);
 
     while (true)
     {
@@ -137,7 +137,7 @@ void liftControl(void *parameter)
 }
 
 bool stackCone() {
-    if (stackConeCount >= STACK_CONES_MAX || grabState == GRABBED_STACK) {
+    if (stackConeCount >= STACK_CONES_MAX) {
         return false;
     }
 
@@ -155,7 +155,7 @@ bool stackCone() {
 }
 
 bool stackConeLoader(){
-  if (stackConeCount >= STACK_CONES_MAX || grabState == GRABBED_STACK) {
+  if (stackConeCount >= STACK_CONES_MAX) {
       return false;
   }
 
@@ -209,7 +209,7 @@ bool stackConeStationary() {
 bool grabStack(int mode) {
     /* With fewer than 5 cones the cone lift doesn't touch the top of the stack.
      */
-    if (stackConeCount < 5 || grabState == GRABBED_CONE) {
+    if (stackConeCount < 5) {
         /* TODO Should we return true if GRABBED_CONE since the end result of
          * this is to grab a cone?
          */
@@ -245,10 +245,6 @@ void dropCone() {
 }
 
 bool ungrabStack() {
-    if (grabState != GRABBED_STACK) {
-        return false;
-    }
-
     motorSet(goliathMotor, GOLIATH_OUT);
     /* After the 3rd cone the lift needs to move up and the goliath needs to
      * outtake to realse the cone.

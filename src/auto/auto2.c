@@ -6,7 +6,7 @@
 #include "motor.h"
 #include "liftControl.h"
 
-void auto1(){
+void auto2() {
     int startTime = millis();
 
     devgyroResetTo(&gyroDev, 0);
@@ -31,7 +31,6 @@ void auto1(){
     dropCone();
 
     //Score another cone
-    baseTurn(0, true, true, 1.5);
     baseControl(7, 80, 10, 1.0);
     pickupCone(0);
     stackCone();
@@ -39,8 +38,7 @@ void auto1(){
     //Back up.
 
     //Score yet another cone
-    baseTurn(0, true, true, 1.5);
-    baseControl(11, 80, 10, 1.0);
+    baseControl(10, 80, 10, 1.0);
     dropCone();
     pickupCone(0);
     stackCone();
@@ -55,60 +53,52 @@ void auto1(){
     dropCone();
     */
 
-    baseControl(-42, 80, 10, 2.0);
-    baseTurn(45, true, false, 1.0);
+    baseControl(-24, 80, 10, 2.0);
+    baseTurn(-90, 0.25, 1.0, 3.0);
 
-    //Line Up With 20Pt
+    /* Robot spazzes out with this for some reason
+    driveSonar(LOADER_DISTANCE, LOADER_DISTANCE, 80, 10, 2.0);
+    */
 
-    baseControl(-16, 80, 10, 1.5);
-    baseTurn(135, true, true, 1.5);
-
-    //Previous Value: 1.0, 0.3. Not far enough forward.
-
-    //Score in 20Pt
-
-    setMogoAngle(MOGO_DROP_HIGH);
-    driveTime(127, 127, true, 1.4);
-    driveTime(-127, -127, false, 0.6);
-
-    resetStackCones();
-    devgyroResetTo(&gyroDev, 135);
-
-    //Line up with the second Mogo
-    delay (400);
-
-    baseTurn(360-112, true, true, 2.1);
-    setMogoAngleBlock(MOGO_DOWN, 500);
-    baseControl(42, 80, 10, 2.0);
-    baseTurn(360-110,true,true,1.5);
-    baseControl(17,80,10,1.0);
-    setMogoAngleBlock(MOGO_UP, 1000);
-    baseControl(-12, 80, 10, 2.0);
-    baseTurn(180, true, true, 2.0);
-
-    loaderAlign(40, 2000);
-
-    baseTurn(180,true,true,.5);
+    /* baseControl(-6, 800, 10, 2.0); */
 
     bool finishedACone = false;
 
-    while (millis() - startTime < 38000) {
-
+    do {
         pickupConeLoader(0);
         stackConeLoader();
         if (millis() - startTime > 38000){
-          break;
+            /* Break out of the loop here so that we end with the stack grabbed
+             */
+            break;
         }
         ungrabStack();
 
         delay(500);
+    } while (1);
+
+    baseControl(-20, 80, 10, 2.0);
+    baseTurn(-135, true, true, 2.0);
+    baseControl(36, 80, 10, 2.0);
+
+    setMogoAngle(MOGO_DROP_LOW);
+    if (stackConeCount > 5){
+        liftToggle = 0;
+        setConeAngleBlock(CONE_UP_OFFSET, 700);
+
+        motorSet(goliathMotor, GOLIATH_OUT);
+        motorSet(liftMotor, -127);
+        motorSet(liftMotorAux, -127);
+        delay(600);
+        motorSet(liftMotor, 0);
+        motorSet(liftMotorAux, 0);
+        motorSet(goliathMotor, 0);
     }
 
+    resetStackCones();
+    char rainbow = 'R';
+    fputc(rainbow,uart1);
 
-    baseTurn(90, true, true, 1.0);
-    setMogoAngle(MOGO_DOWN);
-    baseControl(7,80,10,1.0);
-    baseControl(-24, 80, 10, 1.5);
-
-    return;
+    baseControl(-8, 80, 10, 2.0);
 }
+

@@ -36,9 +36,6 @@ static void driverControl(void *parameter) {
     while (true) {
       leftDist = ultrasonicGet(leftSonar);
       rightDist = ultrasonicGet(rightSonar);
-      printf("Left Sonic:  %d \n ", leftDist);
-      printf("Right Sonic: %d \n ", rightDist);
-      printf("\n \n \n \n \n \n \n \n \n \n \n \n");
         if (driveMode == DRIVE_TANK) {
             int joyRight = joystickGetAnalog(1, CRY);
             int joyLeft = joystickGetAnalog(1, CLY);

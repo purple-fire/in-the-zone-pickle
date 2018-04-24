@@ -2,7 +2,7 @@
  * @file auto_test.c
  * @author Zach Peltzer
  * @date Created: Sat, 21 Apr 2018
- * @date Last Modified: Sat, 21 Apr 2018
+ * @date Last Modified: Mon, 23 Apr 2018
  */
 
 #include "main.h"
@@ -15,8 +15,8 @@
 
 void autoTest() {
 
-  /**
     devgyroResetTo(&gyroDev, 0);
+    /**
 
     //Begin!
 
@@ -33,16 +33,24 @@ void autoTest() {
     baseTurn(-135, true, true, 4.0);
 
     delay(3000);
-*/
-devgyroResetTo(&gyroDev, 135);
+    */
 
-baseTurn(225, true, true, 2.5);
-delay(500);
-driveUntilSonar(44, 80, 10, 2.0);
-delay(500);
-baseTurn(360-100, true, true, 2.5);
-setMogoAngleBlock(MOGO_DOWN, 500);
-baseControl(42, 80, 10, 2.0);
+    baseTurn(-90, false, true, 3.0);
+    delay(4000);
+    baseTurn(-40, true, true, 2.0);
+
+    /*
+    barBump(30, 3.0);
+    devgyroResetTo(&gyroDev, 135);
+
+    baseTurn(360-135, true, true, 2.5);
+    delay(500);
+    driveSonarRight(12, 80, 10, 2.0);
+    delay(500);
+    baseTurn(360-90, true, true, 2.5);
+    setMogoAngleBlock(MOGO_DOWN, 500);
+    baseControl(42, 80, 10, 2.0);
+    */
 
     return;
 }

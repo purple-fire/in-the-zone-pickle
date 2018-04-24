@@ -14,19 +14,34 @@
 #include "auto_utils.h"
 #include "motor.h"
 
+#define AUTO_COUNT 6
+
+struct {
+    int max, min;
+    void (*autoFunc)(void);
+} autoPositions[AUTO_COUNT] = {
+    { 4095, 3750, auto1 },
+    { 3750, 2850, auto2 },
+    { 2850, 2050, NULL },
+    { 2050, 1200, NULL },
+    { 1200, 500,  NULL },
+    { 500,  0,    autoTest },
+};
+
 void autonomous ()
 {
-  int autoChoice = 2;
+  int autoChoice = analogRead(AUTO_SELECTOR_POT_PORT);
 
-  switch(autoChoice) {
-   case 1:
-      autonOne();
-      break;
-   case 2:
-     autoTest();
-      break;
-   default :
-      return;
+  for (int i = 0; i < AUTO_COUNT; i++) {
+      if (autoPositions[i].max >= autoChoice
+              && autoChoice > autoPositions[i].min) {
+          if (autoPositions[i].autoFunc) {
+              autoPositions[i].autoFunc();
+          } else {
+              /* Just sit there if the position is undefined */
+              return;
+          }
+      }
   }
 
   return;

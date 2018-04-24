@@ -28,12 +28,25 @@ int rightEncoderValue;
 int leftEncoderValue;
 
 void baseControl(float target, float power, float integralRange, float timeOut);
-void baseTurn(float target, bool leftToggle, bool rightToggle, float timeOut);
+void baseTurn(float target, float leftScale, float rightScale, float timeOut);
 void driveTime(float powerL, float powerR, bool coast, float timeOut);
 void wallBump(int threshold, float power, float timeOut, int angle);
-void loaderAlign(int power, int timeout);
-void driveUntilSonar(int target, int power, float integralRange, int timeOut);
-void autonOne();
+void loaderAlign(int power, float timeout);
+void driveSonar(
+        int leftTarget, int rightTarget, int power, float integralRange, float timeOut);
+void driveSonarLeft(
+        int leftTarget, int power, float integralRange, float timeOut);
+void driveSonarRight(
+        int rightTarget, int power, float integralRange, float timeOut);
+
+/**
+ * Move forward (usually at a low speed) until the encoders become steady (the
+ * robot has hit something).
+ */
+void barBump(int power, float timeout);
+
+void auto1();
+void auto2();
 void autoTest();
 
 #ifdef __cplusplus
