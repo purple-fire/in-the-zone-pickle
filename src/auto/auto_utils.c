@@ -60,7 +60,14 @@ void baseControl(float target, float power, float integralRange, float timeOut)
 
 void baseTurn(float target, float leftScale, float rightScale, float timeOut)
 {
-    const float kp = 2.05;
+    /* Angles are based off the blue side setup and inverted when on the red
+     * side
+     */
+    if (teamColor == RED_TEAM) {
+        target *= -1;
+    }
+
+    const float kp = 2.10;
     const float ki = 0.08;
     const float kd = 1.0;
 
@@ -128,39 +135,6 @@ void driveTime(float powerL, float powerR, bool coast, float timeOut)
         rightMotorsBrake();
         leftMotorsBrake();
     }
-}
-
-/**
- * Drives until it senses a obstacle
- */
-
-void wallBump(int threshold, float power, float timeOut, int angle)
-{
-    long T1;
-    T1 = millis();
-    int distance = ULTRA_BAD_RESPONSE;
-    bool bumped = true;
-    timeOut = timeOut*1000;
-
-    while (distance > threshold || distance == ULTRA_BAD_RESPONSE) {
-      distance = 0; /* TODO Put a sensor on or remove wallBump() altogether */
-      rightMotorsSet(power);
-      leftMotorsSet(power);
-
-      if (T1 < millis() - timeOut) {
-          bumped = false;
-          break;
-      }
-    }
-
-    chassisStop();
-
-    if (bumped) {
-        /* Only reset the gyro if we actually bump (as opposed to timing out) */
-        devgyroResetTo(&gyroDev, angle);
-    }
-
-    delay(100);
 }
 
 void loaderAlign(int power, float timeout) {

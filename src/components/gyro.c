@@ -2,10 +2,11 @@
  * @file gyro.c
  * @author Zach Peltzer
  * @date Created: Thu, 01 Mar 2018
- * @date Last Modified: 01 Mar 2018
+ * @date Last Modified: Tue, 24 Apr 2018
  */
 
 #include "gyro.h"
+#include "utilities.h"
 
 void devgyroInit(DevGyro *pGyro, unsigned char port, unsigned short multiplier) {
     pGyro->base = gyroInit(port, multiplier);
@@ -27,7 +28,10 @@ void devgyroReset(DevGyro *pGyro) {
 
 void devgyroResetTo(DevGyro *pGyro, int angle) {
     gyroReset(pGyro->base);
-    pGyro->offset = angle;
+
+    /* Auto routines are made for the blue side of the field and the angles are
+     * just flipped for the red side */
+    pGyro->offset = teamColor == BLUE_TEAM ? angle : -angle;
 }
 
 void devgyroOffset(DevGyro *pGyro, int offset) {

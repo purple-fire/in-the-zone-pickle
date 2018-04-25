@@ -49,6 +49,11 @@ void auto1();
 void auto2();
 void autoTest();
 
+void auto1Blue();
+void auto2Blue();
+void auto1Red();
+void auto2Red();
+
 #ifdef __cplusplus
 }
 #endif

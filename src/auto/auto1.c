@@ -31,7 +31,6 @@ void auto1(){
     dropCone();
 
     //Score another cone
-    baseTurn(0, 1, 1, 1.5);
     baseControl(7, 80, 10, 1.0);
     pickupCone(0);
     stackCone();
@@ -39,30 +38,21 @@ void auto1(){
     //Back up.
 
     //Score yet another cone
-    baseTurn(0, 1, 1, 1.5);
     baseControl(10, 80, 10, 1.0);
     dropCone();
     pickupCone(0);
     stackCone();
     dropCone();
+
     //Pick up the fourth cone
+    baseTurn(0, 1, 1, 1.5);
     setConeAngleBlock(CONE_HALF,500);
     baseControl(11, 80, 10, 1.0);
     pickupCone(0);
     stackCone();
     dropCone();
 
-
-    /*
-    //Score yet another yet another cone
-    baseControl(9, 80, 10, 1.0);
-    dropCone();
-    pickupCone(0);
-    stackCone();
-    dropCone();
-    */
-
-    baseControl(-53, 80, 10, 2.0);
+    baseControl(-54, 80, 10, 2.0);
 
     baseTurn(45, 1.0, 0.2, 1.0);
 

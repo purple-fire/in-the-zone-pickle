@@ -357,23 +357,24 @@ void operatorControl() {
                     liftToggle = 1;
 
                     switch (stackingMode){
-                      case 0:
-                      stackCone();
-                      break;
+                    case 0:
+                        stackCone();
+                        break;
 
-                      case 1:
-                      stackConeLoader();
-                      break;
+                    case 1:
+                        stackConeLoader();
+                        break;
 
-                      case 2:
-                      grabStack(0);
-                      break;
+                    case 2:
+                        grabStack(0);
+                        break;
 
-                      case 3:
+                    case 3:
 
-                      break;
+                        break;
+                    default:
+                        stackCone();
                     }
-                    stackCone();
                 }
 
                 /* Only do manual ones if the automated one is not being used */

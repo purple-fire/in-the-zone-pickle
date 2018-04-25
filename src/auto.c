@@ -20,12 +20,12 @@ struct {
     int max, min;
     void (*autoFunc)(void);
 } autoPositions[AUTO_COUNT] = {
-    { 4095, 3750, auto1 },
-    { 3750, 2850, auto2 },
+    { 4095, 3750, auto1Blue },
+    { 3750, 2850, auto2Blue },
     { 2850, 2050, NULL },
     { 2050, 1200, NULL },
-    { 1200, 500,  NULL },
-    { 500,  0,    autoTest },
+    { 1200, 500,  auto2Red },
+    { 500,  0,    auto1Red },
 };
 
 void autonomous ()
@@ -37,10 +37,8 @@ void autonomous ()
               && autoChoice > autoPositions[i].min) {
           if (autoPositions[i].autoFunc) {
               autoPositions[i].autoFunc();
-          } else {
-              /* Just sit there if the position is undefined */
-              return;
           }
+          /* Keep searching if the function is not defined */
       }
   }
 
